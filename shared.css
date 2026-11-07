@@ -409,3 +409,10 @@ html.portrait .eyebrow .mt-end .mt-logo{height:20px}
 .reveal .slides>section>section.present{display:flex!important}
 .reveal kbd,.keys-row kbd{font:inherit}
 html.portrait .hljs-ln-code{padding-left:10px!important;padding-right:10px!important}
+
+.home-logo{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:calc(16px + env(safe-area-inset-left,0px));z-index:40;display:block;width:34px;height:34px;opacity:.9;border-radius:6px}
+.home-logo:hover,.home-logo:focus-visible{opacity:1;outline:2px solid var(--gold);outline-offset:3px}
+.home-logo svg{width:100%;height:100%;display:block}
+html.portrait .home-logo{width:28px;height:28px;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px))}
+.xlinks a.next{border-color:var(--gold);color:var(--gold);font-weight:600}
+.xlinks a.next::after{content:" →"}

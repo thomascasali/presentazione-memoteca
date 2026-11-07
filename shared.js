@@ -95,9 +95,19 @@
     });
   };
 
+  function ensureHome() {
+    if (document.querySelector(".home-logo")) return;
+    var a = document.createElement("a");
+    a.className = "home-logo"; a.setAttribute("data-kb", "index.html"); a.href = "index.html";
+    a.setAttribute("aria-label", "Indice / Index"); a.title = "Indice / Index";
+    a.innerHTML = '<svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#f0c169" d="M6 22V8h12l8.17 14h11.66L46 8h12v14Z"/><path fill="#7fcbb3" d="M6 39V25h21.92L32 32l4.08-7H58v14H46V28l-6.41 11H24.41L18 28v11Z"/><path fill="#e88f6c" d="M6 56V42h52v14H46V42h-8.16l-4.67 8h-2.34l-4.67-8H18v14Z"/></svg>';
+    document.body.appendChild(a);
+  }
+
   /* ----- mazzi reveal ----- */
   KB.initDeck = function (opts) {
     opts = opts || {};
+    ensureHome();
     var isPrint = /print-pdf/.test(location.search);
     var mq = window.matchMedia('(orientation: portrait) and (max-width: 820px)');
     common();

@@ -4,27 +4,29 @@ Presentation available in English: https://thomascasali.github.io/presentazione-
 
 ▶️ **Vedi la presentazione**: https://thomascasali.github.io/presentazione-kb-workflow/
 
-Nuova versione in prova (reveal.js, tastiera, IT/EN): parti dall'indice [`v2/index.html`](v2/index.html), online su `/v2/` dopo la pubblicazione.
+La versione precedente (cinque atti in React) resta online in [`v1/`](v1/index.html). I vecchi indirizzi (`atto1-il-problema.html` e simili) rimandano alle pagine nuove.
 
-Presentazione interattiva su come funziona `claude-kb-workflow`, rivolta a chi si avvicina alla programmazione: un flusso a tre livelli (sessioni → wiki → KB stabile) per far arrivare all'AI, su ogni progetto, quello che ha imparato lavorando sugli altri.
+Presentazione interattiva su come funziona Memoteca (in precedenza `claude-kb-workflow`), rivolta a chi si avvicina alla programmazione: un flusso a tre livelli (sessioni → wiki → KB stabile) per far arrivare all'AI, su ogni progetto, quello che ha imparato lavorando sugli altri.
 
-Ora è bilingue italiano/inglese: un selettore di lingua in apertura sull'indice propaga la scelta a tutti e cinque gli atti (salvata in `localStorage`, sovrascrivibile con `?lang=en` o `?lang=it` in URL).
+Bilingue italiano/inglese: italiano di default, `?lang=en` per l'inglese; la scelta si ricorda in `localStorage`.
 
-## Contenuti di v2 (in prova)
+## Contenuti
 
-Il toolkit si chiama Memoteca (il repository resta `claude-kb-workflow`): logo e favicon in `v2/assets/memoteca-*.svg`, inline in versione scura nelle pagine.
+Il toolkit si chiama Memoteca (repository `thomascasali/memoteca`, in precedenza `claude-kb-workflow`): logo e favicon in `assets/memoteca-*.svg`, inline in versione scura nelle pagine.
 
-Tre voci raggiungibili dall'indice `v2/index.html`. Lingua italiana di default, `?lang=en` per l'inglese; `I` torna all'indice, `L` cambia lingua, `Esc` apre la panoramica, `S` le note del relatore.
+Tre voci raggiungibili dall'indice `index.html`. Lingua italiana di default, `?lang=en` per l'inglese; `I` torna all'indice, `L` cambia lingua, `Esc` apre la panoramica, `S` le note del relatore.
 
 | Voce | File | Contenuto | Slide |
 |------|------|-----------|-------|
-| Presentazione | `v2/presentazione.html` | Il problema, cosa offre già Claude Code, l'idea, i tre livelli e l'esame di promozione, comandi, lead e agenti, gate del reviewer, review log, skill, pattern, fonte unica, ripristino, il quadro completo, limiti, come provarlo | 24 |
-| Sotto il cofano | `v2/sotto-il-cofano.html` | Estratti dai file del toolkit 0.4.1: bootstrap, CLAUDE.md, orchestratore, agente, skill, pagina wiki, KB stabile, il giro completo | 13 |
-| Una sessione vera | `v2/sessione-vera.html` | Simulatore di tre sessioni di lavoro (Invio o freccia giù per avanzare, 1 2 3 per lo scenario) | 3 |
+| Presentazione | `presentazione.html` | Il problema, cosa offre già Claude Code, l'idea, i tre livelli e l'esame di promozione, comandi, lead e agenti, gate del reviewer, review log, skill, pattern, fonte unica, ripristino, il quadro completo, limiti, come provarlo | 24 |
+| Sotto il cofano | `sotto-il-cofano.html` | Estratti dai file del toolkit 0.4.1: bootstrap, CLAUDE.md, orchestratore, agente, skill, pagina wiki, KB stabile, il giro completo | 13 |
+| Una sessione vera | `sessione-vera.html` | Simulatore di tre sessioni di lavoro (Invio o freccia giù per avanzare, 1 2 3 per lo scenario) | 3 |
 
-Codice comune in `v2/shared.css`, `v2/shared.js` e `v2/sim.js`. Solo reveal.js 5.1.0 da cdnjs, nessuna build. Export PDF con `?print-pdf`.
+Codice comune in `shared.css`, `shared.js` e `sim.js`. Solo reveal.js 5.1.0 da cdnjs, nessuna build. Export PDF con `?print-pdf`.
 
-## Contenuti (versione attuale)
+## Versione precedente (v1)
+
+I file sono in `v1/`: stesso contenuto e stessi link relativi di prima.
 
 | Atto | Titolo | Argomenti | Slide |
 |------|--------|-----------|-------|
@@ -36,7 +38,7 @@ Codice comune in `v2/shared.css`, `v2/shared.js` e `v2/sim.js`. Solo reveal.js 5
 | Appendice | Sotto il cofano | Estratti reali dal repo pubblico: bootstrap di sessione, CLAUDE.md globale e di progetto, orchestratore, agente, skill, pagina wiki, KB stabile | 10 |
 | Appendice B | Una sessione vera | Simulatore a 3 scenari (Flutter, portale web, debug) con terminale e pannello attori | 3 |
 
-## Caratteristiche
+## Caratteristiche (v1)
 
 - **48 slide** interattive in 5 atti più due appendici
 - **4 simulatori interattivi veri** (viaggio di un fatto attraverso l'esame, orchestra in azione, spot the bug, sessione reale a 3 scenari)
@@ -44,7 +46,7 @@ Codice comune in `v2/shared.css`, `v2/shared.js` e `v2/sim.js`. Solo reveal.js 5
 - Navigazione da tastiera (frecce, spazio, ESC, tasti numerici 1-9)
 - Responsive per mobile, tablet e proiettore/LIM
 
-## Tecnologie
+## Tecnologie (v1)
 
 - HTML5 + CSS3
 - React 18 (via CDN, zero build)

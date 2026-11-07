@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="it" data-title-it="Sotto il cofano · claude-kb-workflow" data-title-en="Under the hood · claude-kb-workflow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sotto il cofano · claude-kb-workflow</title>
+<meta name="description" content="Estratti dai file del toolkit claude-kb-workflow.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="intro" class="g-app title">
+
+<div class="title-wrap">
+  <p class="eyebrow mono">claude-kb-workflow · toolkit v0.4.1</p>
+  <h1><span lang="it">Sotto il cofano</span><span lang="en">Under the hood</span></h1>
+  <p class="lead"><span lang="it">Come sono fatti i pezzi del sistema, riga per riga.</span><span lang="en">How the pieces of the system are built, line by line.</span></p>
+  <div class="cols2"><ul class="list">
+    <li><span lang="it">Il bootstrap di una sessione</span><span lang="en">A session's bootstrap</span></li><li><span lang="it">CLAUDE.md globale e di progetto</span><span lang="en">Global and project CLAUDE.md</span></li><li><span lang="it">L'orchestratore</span><span lang="en">The orchestrator</span></li><li><span lang="it">Un agente e una skill</span><span lang="en">An agent and a skill</span></li></ul>
+  <ul class="list"><li><span lang="it">Una pagina wiki</span><span lang="en">A wiki page</span></li><li><span lang="it">La KB stabile</span><span lang="en">The stable KB</span></li><li><span lang="it">Il giro completo</span><span lang="en">The full loop</span></li></ul></div>
+  <p lang="it" class="keys-row"><kbd>←</kbd><kbd>→</kbd> o spazio: avanti · <kbd>Esc</kbd> panoramica · <kbd>S</kbd> note · <kbd>L</kbd> lingua · <kbd>I</kbd> indice</p><p lang="en" class="keys-row"><kbd>←</kbd><kbd>→</kbd> or space: next · <kbd>Esc</kbd> overview · <kbd>S</kbd> notes · <kbd>L</kbd> language · <kbd>I</kbd> index</p>
+</div>
+<aside class="notes"><div lang="it"><p>Gli estratti vengono dal repository pubblico claude-kb-workflow alla versione 0.4.1: li verifica chiunque lo cloni. Fanno eccezione i due CLAUDE.md (slide 2 e 3 della sezione): sono esempi semplificati, perché il mio file reale è personale. Gli estratti in italiano sono tradotti nella versione inglese, con la nota.</p></div><div lang="en"><p>The excerpts come from the public claude-kb-workflow repository at version 0.4.1: anyone who clones it can check them. The exception is the two CLAUDE.md files (slides 2 and 3 of this section): they are simplified examples, because my real file is personal. Excerpts that are in Italian are translated in the English version, with a note.</p></div></aside>
+</section>
+<section class="stack">
+<section id="bootstrap" class="g-agents">
+<p class="eyebrow mono"><span class="no">01</span> · <span lang="it">Il bootstrap</span><span lang="en">The bootstrap</span></p>
+<h2><span lang="it">Cosa succede quando apri una sessione</span><span lang="en">What happens when you open a session</span></h2>
+<div class="body"><div class="boot"><div class="b" style="--acc:var(--blue)"><span class="n">1</span><div><strong><span lang="it">CLAUDE.md globale</span><span lang="en">Global CLAUDE.md</span></strong><span class="d"><span lang="it">vale per tutti i progetti</span><span lang="en">applies to every project</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--blue)"><span class="n">2</span><div><strong><span lang="it">CLAUDE.md di progetto</span><span lang="en">Project CLAUDE.md</span></strong><span class="d"><span lang="it">se esiste</span><span lang="en">if it exists</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--blue)"><span class="n">3</span><div><strong><span lang="it">Memoria automatica</span><span lang="en">Auto memory</span></strong><span class="d"><span lang="it">quella del progetto corrente</span><span lang="en">the current project's</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--blue)"><span class="n">4</span><div><strong><span lang="it">Agenti e skill</span><span lang="en">Agents and skills</span></strong><span class="d"><span lang="it">frontmatter valido da agents/*.md, skill indicizzate per description</span><span lang="en">valid frontmatter from agents/*.md, skills indexed by description</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--gold)"><span class="n">5</span><div><strong><span lang="it">Il tuo primo messaggio</span><span lang="en">Your first message</span></strong><span class="d"><span lang="it">solo adesso</span><span lang="en">only now</span></span></div></div></div>
+<p class="callout sm"><span lang="it">Tutto questo avviene prima del tuo primo prompt, a ogni sessione.</span><span lang="en">All of this happens before your first prompt, in every session.</span></p></div>
+<aside class="notes"><div lang="it"><p>Il CLAUDE.md è l'unico file caricato sempre: per questo resta corto e fa da indice, con puntatori alla conoscenza invece del contenuto. Se il contenuto stesse lì dentro, ogni sessione pagherebbe il costo di leggerlo tutto. Premere avanti per vedere lo schema del file.</p></div><div lang="en"><p>CLAUDE.md is the only file that is always loaded: that is why it stays short and works as an index, with pointers to the knowledge instead of the content. If the content lived there, every session would pay to read all of it. Press forward to see the file outline.</p></div></aside>
+</section>
+<section id="bootstrap-schema" class="g-agents">
+<p class="eyebrow mono"><span class="no">01</span> · <span lang="it">Il bootstrap</span><span lang="en">The bootstrap</span></p>
+<h2><span lang="it">Lo schema di un CLAUDE.md globale</span><span lang="en">The outline of a global CLAUDE.md</span></h2>
+<div class="body"><div class="excerpts one"><div class="excerpt">
+<p class="src mono small"><span lang="it">~/.claude/CLAUDE.md · schema semplificato (il file reale è personale)</span><span lang="en">~/.claude/CLAUDE.md · simplified outline (the real file is personal)</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="1-5">## Basi di conoscenza        &lt;- puntatori a KB stabile e LLM Wiki
+## Standard obbligatori      &lt;- regole valide su ogni progetto
+## Orchestrazione            &lt;- lead, tre livelli di modello, gate del reviewer
+## Stile di comunicazione    &lt;- quando parlare, quando lavorare in silenzio
+## Code review incrementale  &lt;- si rivede solo il diff dall&#x27;ultimo SHA</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="1-5">## Knowledge bases           &lt;- pointers to the stable KB and the LLM Wiki
+## Mandatory standards       &lt;- rules that hold on every project
+## Orchestration             &lt;- lead, three model tiers, reviewer gate
+## Communication style       &lt;- when to talk, when to work in silence
+## Incremental code review   &lt;- review only the diff since the last SHA</code></pre>
+</div></div>
+<ul class="caps cc"><li><span lang="it">Globale: il metodo. Poi il progetto: il contesto. Poi il prompt: il compito di oggi.</span><span lang="en">Global: the method. Then the project: the context. Then the prompt: today's task.</span></li><li><span lang="it">Cambi il metodo una volta e vale ovunque da subito.</span><span lang="en">Change the method once and it holds everywhere from then on.</span></li></ul></div>
+<aside class="notes"><div lang="it"><p>È la gerarchia delle leve di docs/orchestrazione.md: CLAUDE.md globale (solo cambi di metodo), description degli agenti (se il lead delega male), prompt di sessione (compito e vincoli).</p></div><div lang="en"><p>This is the hierarchy of levers in docs/orchestration.md: global CLAUDE.md (method changes only), agents' description (if the lead delegates badly), session prompt (task and constraints).</p></div></aside>
+</section>
+</section>
+<section id="claude-globale" class="g-agents">
+<p class="eyebrow mono"><span class="no">02</span> · <span lang="it">CLAUDE.md globale</span><span lang="en">Global CLAUDE.md</span></p>
+<h2><span lang="it">Dentro il CLAUDE.md globale</span><span lang="en">Inside the global CLAUDE.md</span></h2>
+<div class="body"><div class="excerpts"><div class="excerpt">
+<p class="src mono small"><span lang="it">~/.claude/CLAUDE.md · esempio semplificato e tradotto</span><span lang="en">~/.claude/CLAUDE.md · simplified example</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="4-5,9,12">## Basi di conoscenza
+- KB stabile: &lt;percorso&gt;/knowledge-base/
+- LLM Wiki: &lt;percorso&gt;/llm-wiki/wiki/index.md
+- Prima di reimplementare qualcosa di infrastrutturale,
+  cerca la guida in KB.
+
+## Orchestrazione
+- Pianifica, delega ai subagent, sintetizza.
+- Gate: prima di dichiarare finito, passa dal reviewer.
+
+## Code review incrementale
+- Rivedi solo `git diff &lt;ultimo-sha-del-log&gt;..HEAD`.</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="4-5,9,12">## Knowledge bases
+- Stable KB: &lt;path&gt;/knowledge-base/
+- LLM Wiki: &lt;path&gt;/llm-wiki/wiki/index.md
+- Before reimplementing anything infrastructural,
+  look for the guide in the KB.
+
+## Orchestration
+- Plan, delegate to subagents, synthesize.
+- Gate: before declaring done, go through the reviewer.
+
+## Incremental code review
+- Review only `git diff &lt;last-sha-in-log&gt;..HEAD`.</code></pre>
+</div>
+<ul class="caps"><li><span lang="it">Il file non contiene la conoscenza: dice dove sta e quando cercarla.</span><span lang="en">The file does not hold the knowledge: it says where it is and when to look.</span></li><li><span lang="it">Le regole valide su ogni progetto stanno qui, non ripetute nei prompt.</span><span lang="en">Rules that hold on every project live here, not repeated in prompts.</span></li><li><span lang="it">Lo stato dei progetti non c'entra: sta nella wiki.</span><span lang="en">Project state does not belong here: it lives in the wiki.</span></li></ul></div></div>
+<aside class="notes"><div lang="it"><p>Esempio semplificato: il mio file reale è personale e non sta nel repository. I pezzi corrispondono a ciò che i docs del toolkit descrivono: la politica di orchestrazione (docs/orchestrazione.md) e la review incrementale (docs/review-log-incrementale.md).</p></div><div lang="en"><p>Simplified example: my real file is personal and not in the repository. The pieces match what the toolkit docs describe: the orchestration policy (docs/orchestration.md) and the incremental review (docs/incremental-review-log.md).</p></div></aside>
+</section>
+<section id="claude-progetto" class="g-agents">
+<p class="eyebrow mono"><span class="no">03</span> · <span lang="it">CLAUDE.md di progetto</span><span lang="en">Project CLAUDE.md</span></p>
+<h2><span lang="it">Dentro il CLAUDE.md di progetto</span><span lang="en">Inside the project CLAUDE.md</span></h2>
+<div class="body"><div class="excerpts"><div class="excerpt">
+<p class="src mono small"><span lang="it">CLAUDE.md del repo · esempio generico</span><span lang="en">the repo's CLAUDE.md · generic example</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="12-13"># nome-progetto: istruzioni per lavorare nel repo
+
+## Stack
+- Backend Laravel, frontend Vue 3 con Vite
+
+## Comandi
+- Test: [...]
+
+## Da non fare
+- Non committare il file .env
+
+## Stato e versione
+- Non qui: stanno in wiki/projects/nome-progetto.md</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="12-13"># project-name: instructions for working in the repo
+
+## Stack
+- Laravel backend, Vue 3 with Vite frontend
+
+## Commands
+- Tests: [...]
+
+## Do not
+- Do not commit the .env file
+
+## State and version
+- Not here: they live in wiki/projects/project-name.md</code></pre>
+</div>
+<ul class="caps"><li><span lang="it">Il globale porta il metodo, questo porta il contesto del repo.</span><span lang="en">The global file carries the method, this one carries the repo's context.</span></li><li><span lang="it">Niente versioni e niente stato: li tiene la wiki.</span><span lang="en">No versions and no status: the wiki keeps them.</span></li><li><span lang="it">Una sola casa per ogni informazione.</span><span lang="en">One home for each piece of information.</span></li></ul></div></div>
+<aside class="notes"><div lang="it"><p>Esempio generico scritto per questa presentazione. La regola viene da docs/fonte-unica.md: le istruzioni di lavoro stanno nel CLAUDE.md del repo, senza versioni e senza stato, che stanno nella pagina wiki del progetto.</p></div><div lang="en"><p>Generic example written for this deck. The rule comes from docs/single-source-of-truth.md: working instructions live in the repo's CLAUDE.md, with no versions and no status, which live in the project's wiki page.</p></div></aside>
+</section>
+<section id="orchestratore" class="g-agents">
+<p class="eyebrow mono"><span class="no">04</span> · <span lang="it">L'orchestratore</span><span lang="en">The orchestrator</span></p>
+<h2><span lang="it">Non è codice: è un file di testo</span><span lang="en">Not code: a text file</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">docs/orchestrazione.md · docs/orchestration.md</span><span lang="en">docs/orchestrazione.md · docs/orchestration.md</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="1-3,9">## Flusso di orchestrazione (vale per ogni lavoro non banale)
+Tu sei il lead: pianifica, decomponi, delega ai subagent — non eseguire
+tu il lavoro — e sintetizza. Mostra prima il piano, poi esegui.
+- Incarichi piccoli, chiusi, provabili -&gt; quick-worker (default)
+- Causa sconosciuta, scelta vera, modifiche ampie -&gt; fast-worker
+- Design, piani, secondo parere -&gt; deep-reasoner
+- Se un livello fallisce, rilancia quello sopra con il lavoro già fatto allegato.
+- Per il resto scegli lo specialista dalla description del pool.
+- Gate obbligatorio: prima di dichiarare finito, passa da `reviewer`.
+- Eccezione: task banali/conversazionali in prima persona, senza cerimonia.</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="1-3,9">## Orchestration flow (applies to all non-trivial work)
+You are the lead: plan, decompose, delegate to subagents — don&#x27;t do
+the work yourself — and synthesize. Show the plan first, then execute.
+- Small, closed, testable jobs -&gt; quick-worker (default)
+- Unknown cause, real choice, wide changes -&gt; fast-worker
+- Design, plans, second opinion -&gt; deep-reasoner
+- Relaunch one tier up, with the previous work attached, when a tier fails.
+- For everything else, pick the specialist from the pool&#x27;s description.
+- Mandatory gate: before declaring done, pass through `reviewer`.
+- Exception: trivial/conversational tasks done directly, no ceremony.</code></pre>
+</div>
+<ul class="caps cc"><li><span lang="it">Chi orchestra non esegue: pianifica e delega.</span><span lang="en">Whoever orchestrates does not execute: it plans and delegates.</span></li><li><span lang="it">Tre livelli di modello, il più economico che basta.</span><span lang="en">Three model tiers, the cheapest that is enough.</span></li><li><span lang="it">Se un livello fallisce, si sale con il lavoro allegato.</span><span lang="en">If a tier fails, move up with the work attached.</span></li><li><span lang="it">Il gate: prima di dire finito, passa dal reviewer.</span><span lang="en">The gate: before saying done, go through the reviewer.</span></li></ul></div>
+<aside class="notes"><div lang="it"><p>È il blocco reale di docs/orchestrazione.md (versione inglese: docs/orchestration.md), l'esempio di politica che il documento propone di adattare. Vale perché sta scritto nel CLAUDE.md, non perché lo si ripete nei prompt.</p></div><div lang="en"><p>This is the block from docs/orchestration.md (Italian version: docs/orchestrazione.md), the example policy the doc suggests adapting. It holds because it is written in CLAUDE.md, not because it is repeated in prompts.</p></div></aside>
+</section>
+<section id="agente" class="g-agents">
+<p class="eyebrow mono"><span class="no">05</span> · <span lang="it">Un agente</span><span lang="en">An agent</span></p>
+<h2>agents/quick-worker.md</h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">agents/quick-worker.md</span><span lang="en">agents/quick-worker.md · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-yaml" data-trim data-line-numbers="2-4,9-10">---
+name: quick-worker
+description: Default per incarichi piccoli e chiusi, verificabili con un test o un comando - raccolta di stato locale, riassunti, log locali o già scaricati, domande delimitate, modifiche meccaniche, output in serie, piani già scritti, review di primo passaggio. Mai su server di produzione, file con segreti o gate finale.
+model: haiku
+---
+
+[...]
+
+- Se non riesci a completare o la verifica fallisce, dillo chiaramente,
+  con cosa hai fatto e dove ti sei fermato.</code></pre>
+<pre lang="en"><code class="language-yaml" data-trim data-line-numbers="2-4,9-10">---
+name: quick-worker
+description: Default for small, closed jobs a test or a command can prove - collecting local state, summaries, local or already-downloaded logs, bounded questions, mechanical edits, serial output, plans already written, first-pass review. Never on production servers, files with secrets or the final gate.
+model: haiku
+---
+
+[...]
+
+- If you cannot finish or the check fails, say so plainly,
+  with what you did and where you stopped.</code></pre>
+</div>
+<ul class="caps cc"><li><span lang="it">name: il nome con cui il lead lo chiama.</span><span lang="en">name: how the lead calls it.</span></li><li><span lang="it">description: l'unico criterio con cui il lead lo sceglie.</span><span lang="en">description: the only criterion by which the lead picks it.</span></li><li><span lang="it">model: haiku, il livello di default.</span><span lang="en">model: haiku, the default tier.</span></li></ul></div>
+<aside class="notes"><div lang="it"><p>Un estratto: il frontmatter e l'ultimo limite. Senza frontmatter valido l'agente non è rotto, è invisibile: il file resta lì ma il lead non sa che esiste. È la storia del frontmatter rovinato di docs/orchestrazione.md.</p></div><div lang="en"><p>An excerpt: the frontmatter and the last limit. Without valid frontmatter the agent is not broken, it is invisible: the file is there but the lead does not know it exists. It is the corrupted-frontmatter story in docs/orchestration.md.</p></div></aside>
+</section>
+<section id="skill" class="g-agents">
+<p class="eyebrow mono"><span class="no">06</span> · <span lang="it">Una skill</span><span lang="en">A skill</span></p>
+<h2>skills/verifica-prima-di-completare</h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">skills/verifica-prima-di-completare/SKILL.md</span><span lang="en">skills/verifica-prima-di-completare/SKILL.md · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="3,8-12">---
+name: verifica-prima-di-completare
+description: Prima di dichiarare una task completata, [...] NON da usare per task di pura esplorazione/lettura senza modifiche.
+---
+[...]
+## La regola
+Niente claim di completamento senza evidenza fresca dell&#x27;esecuzione.
+1. **Identifica** il comando che prova la claim
+2. **Esegui** il comando completo
+3. **Leggi** l&#x27;output integrale e l&#x27;exit code
+4. **Conferma** che l&#x27;output corrisponda alla claim
+5. **Solo allora** comunica il successo</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="3,8-12">---
+name: verifica-prima-di-completare
+description: Before declaring a task complete, [...] NOT for pure exploration/reading tasks with no changes.
+---
+[...]
+## The rule
+No completion claims without fresh evidence of execution.
+1. **Identify** the command that proves the claim
+2. **Run** the full command
+3. **Read** the full output and the exit code
+4. **Confirm** that the output matches the claim
+5. **Only then** report success</code></pre>
+</div>
+<ul class="caps cc"><li><span lang="it">La description dice quando si accende e quando NON usarla. Cinque passi fissi prima di «fatto».</span><span lang="en">The description says when it switches on and when NOT to use it. Five steps in fixed order, before writing “done”.</span></li></ul></div>
+<aside class="notes"><div lang="it"><p>Estratto con [...] dove il testo è lungo: la description completa e le sezioni dopo la regola sono nel file. Una skill si accende quando il contesto somiglia alla sua description: nessun comando da digitare. Se la description è vaga, scatta troppo spesso o mai.</p></div><div lang="en"><p>Excerpt with [...] where the text is long: the full description and the sections after the rule are in the file. A skill switches on when the context resembles its description: no command to type. If the description is vague, it fires too often or never.</p></div></aside>
+</section>
+<section class="stack">
+<section id="wiki" class="g-know">
+<p class="eyebrow mono"><span class="no">07</span> · <span lang="it">Una pagina wiki</span><span lang="en">A wiki page</span></p>
+<h2><span lang="it">Come è fatta la wiki</span><span lang="en">How the wiki is built</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">llm-wiki-template/schema.md</span><span lang="en">llm-wiki-template/schema.md · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-plaintext" data-trim data-line-numbers="3-4">llm-wiki/
+├── wiki/
+│   ├── index.md           # Indice globale (una riga per pagina)
+│   ├── log.md             # Append-only: ogni operazione ingest/lint/promote
+│   ├── projects/
+│   ├── concepts/          # Concetti tecnici emersi dalle sessioni
+│   ├── decisions/
+│   └── lessons/           # Lezioni apprese da bug, deploy, errori
+└── raw/
+    ├── sessions/          # Dump di sessioni Claude significative
+    └── [...]</code></pre>
+<pre lang="en"><code class="language-plaintext" data-trim data-line-numbers="3-4">llm-wiki/
+├── wiki/
+│   ├── index.md           # Global index (one line per page)
+│   ├── log.md             # Append-only: every ingest/lint/promote operation
+│   ├── projects/
+│   ├── concepts/          # Technical concepts that emerged from sessions
+│   ├── decisions/
+│   └── lessons/           # Lessons learned from bugs, deploys, mistakes
+└── raw/
+    ├── sessions/          # Dumps of significant Claude sessions
+    └── [...]</code></pre>
+</div>
+<p class="dim"><span lang="it">raw/ non si modifica mai. A cambiare è solo la pagina compilata sopra.</span><span lang="en">raw/ is never edited. Only the page compiled on top of it changes.</span></p></div>
+<aside class="notes"><div lang="it"><p>La wiki è append-mostly: le decisioni superate si segnano come superseded, non si cancellano. Premere avanti per l'intestazione di una pagina.</p></div><div lang="en"><p>The wiki is append-mostly: superseded decisions are marked as such, not deleted. Press forward for a page header.</p></div></aside>
+</section>
+<section id="wiki-pagina" class="g-know">
+<p class="eyebrow mono"><span class="no">07</span> · <span lang="it">Una pagina wiki</span><span lang="en">A wiki page</span></p>
+<h2><span lang="it">L'intestazione di una pagina</span><span lang="en">A page header</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">llm-wiki-template/schema.md</span><span lang="en">llm-wiki-template/schema.md · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="2-4"># Titolo
+**Aggiornato**: YYYY-MM-DD
+**Sorgenti**: raw/sessions/YYYY-MM-DD-*.md, ...
+**Tags**: #progetto, #concetto
+
+- **Link interni** (wiki → wiki): `[[nome-pagina]]` oppure `[[nome-pagina|Testo alias]]`</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="2-4"># Title
+**Updated**: YYYY-MM-DD
+**Sources**: raw/sessions/YYYY-MM-DD-*.md, ...
+**Tags**: #project, #concept
+
+- **Internal links** (wiki → wiki): `[[page-name]]` or `[[page-name|Alias text]]`</code></pre>
+</div>
+<ul class="caps cc"><li><span lang="it">Tre campi obbligatori: quando è stata aggiornata, da quali sorgenti, con quali etichette.</span><span lang="en">Three mandatory fields: when it was updated, from which sources, with which tags.</span></li><li><span lang="it">I link [[...]] usano la sintassi Obsidian e disegnano il grafo della wiki.</span><span lang="en">[[...]] links use Obsidian's syntax and draw the wiki's graph.</span></li></ul></div>
+<aside class="notes"><div lang="it"><p>Tre campi obbligatori in cima a ogni pagina. I link interni usano la sintassi Obsidian [[...]]: sono questi a disegnare il grafo della wiki.</p></div><div lang="en"><p>Three mandatory fields on top of every page. Internal links use Obsidian's [[...]] syntax: they draw the wiki's graph.</p></div></aside>
+</section>
+</section>
+<section class="stack">
+<section id="kb-stabile" class="g-know">
+<p class="eyebrow mono"><span class="no">08</span> · <span lang="it">La KB stabile</span><span lang="en">The stable KB</span></p>
+<h2><span lang="it">Cosa contiene</span><span lang="en">What it holds</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">README.md · estratto tradotto</span><span lang="en">README.md</span></p>
+<pre lang="it"><code class="language-plaintext" data-trim data-line-numbers="2-4">claude-kb-workflow/
+├── agents/              # 13 subagent con frontmatter
+├── patterns/            # pattern + note di campo personali
+├── skills/              # 6 skill proprie
+├── commands/            # comandi slash /kb-*
+├── llm-wiki-template/   # template per la wiki viva
+├── project-memories/    # template ed esempi anonimizzati
+└── [...]</code></pre>
+<pre lang="en"><code class="language-plaintext" data-trim data-line-numbers="2-4">claude-kb-workflow/
+├── agents/              # 13 subagents with frontmatter
+├── patterns/            # patterns + personal field notes
+├── skills/              # 6 custom skills
+├── commands/            # /kb-* slash commands
+├── llm-wiki-template/   # Template for the living wiki
+├── project-memories/    # Template + anonymized examples
+└── [...]</code></pre>
+</div>
+<p class="dim"><span lang="it">È piccola di proposito: meno regole, ma autorevoli.</span><span lang="en">It is small on purpose: fewer rules, but authoritative.</span></p></div>
+<aside class="notes"><div lang="it"><p>L'albero del repository: agenti, pattern, skill, comandi, template. Premere avanti per l'esame di promozione.</p></div><div lang="en"><p>The repository tree: agents, patterns, skills, commands, templates. Press forward for the promotion exam.</p></div></aside>
+</section>
+<section id="kb-esame" class="g-know">
+<p class="eyebrow mono"><span class="no">08</span> · <span lang="it">La KB stabile</span><span lang="en">The stable KB</span></p>
+<h2><span lang="it">Si entra solo per promozione</span><span lang="en">You get in only by promotion</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small"><span lang="it">commands/kb-promote.md</span><span lang="en">commands/kb-promote.md · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="1,3-5,9">Deve valere ALMENO UNA di queste:
+
+- [ ] È usato da almeno 2 progetti
+- [ ] È un gotcha già pagato, che costerebbe almeno un&#x27;ora a chi lo reincontra
+- [ ] Lo dichiari standard (per esempio il flusso di login che vuoi in ogni app)
+
+E sempre:
+
+- [ ] Verificato in produzione o su device reale (non solo teorico)</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="1,3-5,9">At least ONE of these must hold:
+
+- [ ] It is used by at least 2 projects
+- [ ] It is a gotcha already paid for, that would cost an hour or more to hit again
+- [ ] You declare it a standard (for example the login flow you want in every app)
+
+And in every case:
+
+- [ ] Verified in production or on a real device (not only theoretical)</code></pre>
+</div></div>
+<aside class="notes"><div lang="it"><p>L'esame di /kb-promote: basta una delle tre ragioni, ma la verifica in produzione o su un dispositivo reale è sempre richiesta.</p></div><div lang="en"><p>The /kb-promote exam: one of the three reasons is enough, but verification in production or on a real device is always required.</p></div></aside>
+</section>
+</section>
+<section id="giro" class="g-end">
+<p class="eyebrow mono"><span class="no">09</span> · <span lang="it">Il giro completo</span><span lang="en">The full loop</span></p>
+<h2><span lang="it">Il cerchio si chiude nella sessione dopo</span><span lang="en">The loop closes in the next session</span></h2>
+<div class="body"><div class="flow loop">
+<div class="step"><span class="num mono">1</span><h3><span lang="it">Sessione</span><span lang="en">Session</span></h3><p><span lang="it">grezza</span><span lang="en">raw</span></p></div>
+<div class="step"><span class="num mono">2</span><h3><span lang="it">Wiki</span><span lang="en">Wiki</span></h3><p><span lang="it">compilata</span><span lang="en">compiled</span></p></div>
+<div class="step"><span class="num mono">3</span><h3><span lang="it">Esame</span><span lang="en">Exam</span></h3><p><span lang="it">una ragione e la produzione</span><span lang="en">one reason and production</span></p></div>
+<div class="step"><span class="num mono">4</span><h3><span lang="it">KB stabile</span><span lang="en">Stable KB</span></h3><p><span lang="it">piccola, autorevole</span><span lang="en">small, authoritative</span></p></div>
+<div class="step"><span class="num mono">5</span><h3><span lang="it">Prossima sessione</span><span lang="en">Next session</span></h3><p><span lang="it">anche un altro progetto</span><span lang="en">even another project</span></p></div>
+</div>
+<div class="xlinks"><a data-kb="index.html" href="index.html"><kbd>I</kbd><span lang="it">Indice</span><span lang="en">Index</span></a><a data-kb="presentazione.html" href="presentazione.html"><span lang="it">Presentazione</span><span lang="en">Presentation</span></a><a data-kb="sessione-vera.html" href="sessione-vera.html"><span lang="it">Una sessione vera</span><span lang="en">A real session</span></a></div></div>
+<aside class="notes"><div lang="it"><p>Quello che si è visto in questa sezione sono estratti dei file del toolkit. Il cerchio si chiude quando la KB nutre una sessione futura, anche su un progetto che oggi non esiste ancora. Dall'indice: la presentazione completa e il simulatore di una sessione.</p></div><div lang="en"><p>This section showed excerpts of the toolkit's files. The loop closes when the KB feeds a future session, even on a project that does not exist yet. From the index: the full presentation and the session simulator.</p></div></aside>
+</section>
+</div>
+</div>
+<noscript>Serve JavaScript per le slide. This deck needs JavaScript.</noscript>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/highlight.min.js"></script>
+<script src="shared.js"></script>
+<script>KB.initDeck();</script>
+</body>
+</html>

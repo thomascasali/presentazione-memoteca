@@ -4,13 +4,25 @@ Presentation available in English: https://thomascasali.github.io/presentazione-
 
 ▶️ **Vedi la presentazione**: https://thomascasali.github.io/presentazione-kb-workflow/
 
-Nuova versione in prova (un unico mazzo reveal.js, tastiera, IT/EN): cartella [`v2/`](v2/index.html), online su `/v2/` dopo la pubblicazione.
+Nuova versione in prova (reveal.js, tastiera, IT/EN): parti dall'indice [`v2/index.html`](v2/index.html), online su `/v2/` dopo la pubblicazione.
 
 Presentazione interattiva su come funziona `claude-kb-workflow`, rivolta a chi si avvicina alla programmazione: un flusso a tre livelli (sessioni → wiki → KB stabile) per far arrivare all'AI, su ogni progetto, quello che ha imparato lavorando sugli altri.
 
 Ora è bilingue italiano/inglese: un selettore di lingua in apertura sull'indice propaga la scelta a tutti e cinque gli atti (salvata in `localStorage`, sovrascrivibile con `?lang=en` o `?lang=it` in URL).
 
-## Contenuti
+## Contenuti di v2 (in prova)
+
+Tre voci raggiungibili dall'indice `v2/index.html`. Lingua italiana di default, `?lang=en` per l'inglese; `I` torna all'indice, `L` cambia lingua, `Esc` apre la panoramica, `S` le note del relatore.
+
+| Voce | File | Contenuto | Slide |
+|------|------|-----------|-------|
+| Presentazione | `v2/presentazione.html` | Il problema, cosa offre già Claude Code, l'idea, i tre livelli e l'esame di promozione, comandi, lead e agenti, gate del reviewer, review log, skill, pattern, fonte unica, ripristino, il quadro completo, limiti, come provarlo | 24 |
+| Sotto il cofano | `v2/sotto-il-cofano.html` | Estratti dai file del toolkit 0.4.1: bootstrap, CLAUDE.md, orchestratore, agente, skill, pagina wiki, KB stabile, il giro completo | 13 |
+| Una sessione vera | `v2/sessione-vera.html` | Simulatore di tre sessioni di lavoro (Invio o freccia giù per avanzare, 1 2 3 per lo scenario) | 3 |
+
+Codice comune in `v2/shared.css`, `v2/shared.js` e `v2/sim.js`. Solo reveal.js 5.1.0 da cdnjs, nessuna build. Export PDF con `?print-pdf`.
+
+## Contenuti (versione attuale)
 
 | Atto | Titolo | Argomenti | Slide |
 |------|--------|-----------|-------|

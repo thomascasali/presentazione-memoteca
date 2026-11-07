@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="it" data-title-it="Una sessione vera · claude-kb-workflow" data-title-en="A real session · claude-kb-workflow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Una sessione vera · claude-kb-workflow</title>
+<meta name="description" content="Simulatore di tre sessioni di lavoro con claude-kb-workflow.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="intro" class="g-end title">
+
+<div class="title-wrap">
+  <p class="eyebrow mono">claude-kb-workflow · toolkit v0.4.1</p>
+  <h1><span lang="it">Una sessione vera</span><span lang="en">A real session</span></h1>
+  <p class="lead"><span lang="it">Tre sessioni di lavoro simulate, un passo alla volta. Copioni illustrativi, non registrazioni.</span><span lang="en">Three simulated work sessions, one step at a time. Illustrative scripts, not recordings.</span></p>
+  <ul class="list">
+    <li><span lang="it">Notifiche push: un pattern già in KB, uno specialista, una prova</span><span lang="en">Push notifications: a pattern already in the KB, a specialist, a proof</span></li>
+    <li><span lang="it">Firma dei genitori: implementazione e sicurezza appaiate</span><span lang="en">Parental signature: implementation and security side by side</span></li>
+    <li><span lang="it">Ordine non pagato: la causa prima del fix</span><span lang="en">Unpaid order: the cause before the fix</span></li></ul>
+  <p lang="it" class="keys-row"><kbd>←</kbd><kbd>→</kbd> o spazio: avanti · <kbd>Esc</kbd> panoramica · <kbd>S</kbd> note · <kbd>L</kbd> lingua · <kbd>I</kbd> indice</p><p lang="en" class="keys-row"><kbd>←</kbd><kbd>→</kbd> or space: next · <kbd>Esc</kbd> overview · <kbd>S</kbd> notes · <kbd>L</kbd> language · <kbd>I</kbd> index</p>
+</div>
+<aside class="notes"><div lang="it"><p>Gli attori sono quelli del bootstrap: il CLAUDE.md, il pool di agenti con i tre livelli di modello (Haiku, Sonnet, Opus), la KB. I pattern citati negli scenari (14, 15, 16) sono in patterns/patterns.md nel repository pubblico. I nomi dei progetti e i copioni sono inventati per illustrare il giro.</p></div><div lang="en"><p>The actors are those of the bootstrap: CLAUDE.md, the agent pool with the three model tiers (Haiku, Sonnet, Opus), the KB. The patterns cited in the scenarios (14, 15, 16) are in patterns/patterns.md in the public repository. Project names and scripts are invented to illustrate the loop.</p></div></aside>
+</section>
+<section id="simulatore" class="g-end">
+<p class="eyebrow mono"><span class="no">01</span> · <span lang="it">Il simulatore</span><span lang="en">The simulator</span></p>
+<div class="body sim">
+  <div class="sim-tabs" role="group" aria-label="Scenari / Scenarios">
+    <button type="button" class="btn sim-tab" aria-pressed="true"></button><button type="button" class="btn sim-tab" aria-pressed="false"></button><button type="button" class="btn sim-tab" aria-pressed="false"></button>
+  </div>
+  <div class="sim-main">
+    <div class="term" id="sim-termbox"><div class="term-bar" id="sim-bar"></div><div class="term-body" id="sim-term" aria-live="polite"></div></div>
+    <div class="panel"><div class="actors" id="sim-actors"></div><p class="note" id="sim-note"></p></div>
+  </div>
+  <div class="sim-ctl">
+    <button type="button" class="btn" id="sim-prev"><span lang="it">Indietro</span><span lang="en">Back</span></button>
+    <button type="button" class="btn go" id="sim-next"><span lang="it">Avanti</span><span lang="en">Next</span></button>
+    <button type="button" class="btn" id="sim-restart"><span lang="it">Ricomincia</span><span lang="en">Restart</span></button>
+    <span class="cnt" id="sim-cnt"></span>
+  </div>
+  <p lang="it" class="keys-row sim-keys"><kbd>Invio</kbd> o <kbd>↓</kbd> avanti · <kbd>↑</kbd> indietro · <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> scenario · <kbd>R</kbd> ricomincia · <kbd>←</kbd> <kbd>→</kbd> cambiano slide</p><p lang="en" class="keys-row sim-keys"><kbd>Enter</kbd> or <kbd>↓</kbd> next · <kbd>↑</kbd> back · <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> scenario · <kbd>R</kbd> restart · <kbd>←</kbd> <kbd>→</kbd> change slides</p>
+</div>
+<aside class="notes"><div lang="it"><p>Invio o freccia giù fanno avanzare di un passo, freccia su torna indietro, 1 2 3 scelgono lo scenario, R ricomincia. Con il tocco: i pulsanti, oppure un tap sul terminale per avanzare. Le frecce sinistra e destra cambiano sempre slide. A destra gli attori attivi in ogni passo e, sotto, cosa succede dietro le quinte.</p></div><div lang="en"><p>Enter or the down arrow advance one step, up goes back, 1 2 3 pick the scenario, R restarts. On touch: the buttons, or a tap on the terminal to advance. Left and right always change slides. On the right, the actors active at each step and, below, what happens behind the scenes.</p></div></aside>
+</section>
+<section id="si-ripete" class="g-end">
+<p class="eyebrow mono"><span class="no">02</span> · <span lang="it">Cosa si ripete</span><span lang="en">What repeats</span></p>
+<h2><span lang="it">Tre scenari, lo stesso giro</span><span lang="en">Three scenarios, the same loop</span></h2>
+<div class="body"><ul class="list big">
+  <li><span lang="it">Il secondo progetto non ha ripagato quello che il primo aveva già pagato.</span><span lang="en">The second project did not repay what the first one had already paid for.</span></li>
+  <li><span lang="it">I requisiti di sicurezza erano già scritti prima di aprire l'editor.</span><span lang="en">The security requirements were already written before the editor opened.</span></li>
+  <li><span lang="it">Forzare l'ordine a «pagato» a mano avrebbe nascosto il bug.</span><span lang="en">Forcing the order to “paid” by hand would have hidden the bug.</span></li></ul>
+<p class="dim"><span lang="it">CLAUDE.md prima del codice, la KB prima dell'istinto, un secondo paio d'occhi prima del «fatto».</span><span lang="en">CLAUDE.md before the code, the KB before instinct, a second pair of eyes before “done”.</span></p>
+<div class="xlinks"><a data-kb="index.html" href="index.html"><kbd>I</kbd><span lang="it">Indice</span><span lang="en">Index</span></a><a data-kb="presentazione.html" href="presentazione.html"><span lang="it">Presentazione</span><span lang="en">Presentation</span></a><a data-kb="sotto-il-cofano.html" href="sotto-il-cofano.html"><span lang="it">Sotto il cofano</span><span lang="en">Under the hood</span></a></div></div>
+<aside class="notes"><div lang="it"><p>Intorno a tre prompt diversi si ripete lo stesso giro: il lead sceglie il livello di modello più economico che basta, il gate del reviewer controlla prima del "fatto", /kb-ingest chiude la sessione nella wiki. I pattern 14, 15 e 16 sono in patterns/patterns.md.</p></div><div lang="en"><p>Around three different prompts the same loop repeats: the lead picks the cheapest model tier that is enough, the reviewer gate checks before "done", /kb-ingest closes the session into the wiki. Patterns 14, 15 and 16 are in patterns/patterns.md.</p></div></aside>
+</section>
+</div>
+</div>
+<noscript>Serve JavaScript per le slide. This deck needs JavaScript.</noscript>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
+<script src="shared.js"></script>
+<script src="sim.js"></script>
+<script>KB.initDeck({ onReady: KB.initSim });</script>
+</body>
+</html>

@@ -385,6 +385,15 @@ html.portrait .mt-logo.sm{height:22px}
   body.index .icard{min-height:170px;padding:18px 20px 16px}
 }
 
+body.index .prev{margin:0;font-size:14px}
+body.index .prev a{color:var(--muted);text-underline-offset:3px}
+body.index .prev a:hover{color:var(--text)}
+/* logo piccolo nell'eyebrow: non esce dal margine */
+.eyebrow{flex-wrap:nowrap;min-width:0}
+.eyebrow .mt-end{margin-left:auto;min-width:0;flex:0 1 auto}
+.eyebrow .mt-end .mt-logo{height:26px;width:auto}
+html.portrait .eyebrow .mt-end .mt-logo{height:20px}
+
 /* pile verticali */
 .reveal .slides>section.stack{padding:0!important;display:block!important}
 .reveal .slides>section>section{height:100%;box-sizing:border-box;padding:var(--pad);flex-direction:column;justify-content:flex-start;text-align:left}

@@ -4,6 +4,8 @@ Presentation available in English: https://thomascasali.github.io/presentazione-
 
 ▶️ **Vedi la presentazione**: https://thomascasali.github.io/presentazione-kb-workflow/
 
+Nuova versione in prova (un unico mazzo reveal.js, tastiera, IT/EN): cartella [`v2/`](v2/index.html), online su `/v2/` dopo la pubblicazione.
+
 Presentazione interattiva su come funziona `claude-kb-workflow`, rivolta a chi si avvicina alla programmazione: un flusso a tre livelli (sessioni → wiki → KB stabile) per far arrivare all'AI, su ogni progetto, quello che ha imparato lavorando sugli altri.
 
 Ora è bilingue italiano/inglese: un selettore di lingua in apertura sull'indice propaga la scelta a tutti e cinque gli atti (salvata in `localStorage`, sovrascrivibile con `?lang=en` o `?lang=it` in URL).

@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Conoscenza che attraversa i progetti</title>
+<meta name="description" content="Come funziona claude-kb-workflow: dalle sessioni di Claude Code a una wiki, poi a una KB stabile. Italiano e inglese.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<style>
+:root{
+  --bg:#15120f; --card:#1e1a15; --light:#29231d; --border:#3c332a;
+  --text:#f4eee3; --dim:#d2c8b8; --muted:#a89a83;
+  --gold:#f0c169; --teal:#7fcbb3; --terra:#e88f6c; --blue:#7ab8d6; --purple:#c9a3dd; --green:#8fc47c; --red:#f0826a;
+  --acc:var(--gold);
+  --fs-h1:80px; --fs-h2:54px; --fs-h3:34px; --fs-body:33px; --fs-sm:28px; --fs-xs:24px; --fs-code:22px;
+  --pad:52px 72px 64px;
+}
+html.portrait{
+  --fs-h1:54px; --fs-h2:40px; --fs-h3:28px; --fs-body:26px; --fs-sm:23px; --fs-xs:20px; --fs-code:16px;
+  --pad:34px 28px 56px;
+}
+html,body,.reveal-viewport{background:var(--bg)!important;margin:0;height:100%;overflow:hidden}
+:root{--r-background-color:#15120f}
+.reveal{font-family:'Public Sans',-apple-system,'Segoe UI',sans-serif;font-size:var(--fs-body);color:var(--text);font-weight:400}
+.reveal .slides{text-align:left}
+.reveal .slides>section{height:100%;box-sizing:border-box;padding:var(--pad);flex-direction:column;justify-content:flex-start;text-align:left}
+.reveal .slides>section.present{display:flex!important}
+.reveal h1,.reveal h2,.reveal h3{font-family:'Fraunces',Georgia,serif;font-weight:600;color:var(--text);text-transform:none;letter-spacing:-.01em;margin:0;line-height:1.15;text-shadow:none}
+.reveal h1{font-size:var(--fs-h1)}
+.reveal h2{font-size:var(--fs-h2);margin:6px 0 24px;max-width:1100px}
+.reveal h3{font-size:var(--fs-h3);margin:0 0 10px;color:var(--acc)}
+.reveal p{margin:0 0 14px;line-height:1.4}
+.reveal code,.reveal .mono{font-family:'IBM Plex Mono',Consolas,monospace}
+.reveal code{font-size:.8em;color:var(--acc);background:none;padding:0}
+.reveal a{color:var(--gold);text-decoration:underline;text-underline-offset:4px}
+.reveal a:focus-visible,.lang button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.mono{font-family:'IBM Plex Mono',monospace}
+.small{font-size:var(--fs-xs)}
+.dim{color:var(--dim);font-size:var(--fs-sm)}
+.lead{font-size:calc(var(--fs-body) + 3px);color:var(--dim)}
+.eyebrow{font-size:var(--fs-xs);letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin:0;display:flex;gap:10px;align-items:center}
+.eyebrow .no{display:inline-block;padding:2px 10px;background:var(--acc);color:var(--bg);border-radius:4px;font-weight:600}
+.g-problem{--acc:var(--terra)} .g-know{--acc:var(--teal)} .g-agents{--acc:var(--blue)} .g-quality{--acc:var(--gold)} .g-end{--acc:var(--purple)} .g-app{--acc:var(--green)}
+.body{flex:1;display:flex;flex-direction:column;justify-content:flex-start;gap:20px;min-height:0}
+.card{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--acc);border-radius:10px;padding:20px 24px}
+.card p{margin:0;color:var(--dim);font-size:var(--fs-sm)}
+.card code{display:block;margin-bottom:8px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
+.callout{border-left:5px solid var(--acc);padding:6px 0 6px 22px;margin:0;font-size:var(--fs-body);color:var(--text)}
+.callout.sm{font-size:var(--fs-sm)}
+.tbl .trow{padding:5px 4px}
+.chain{font-size:var(--fs-body);color:var(--acc);margin:0}
+.gate{font-size:var(--fs-body);color:var(--text);background:var(--light);border-radius:8px;padding:14px 22px;margin:0}
+.tag{display:inline-block;padding:3px 12px;border-radius:99px;font-size:var(--fs-xs);font-weight:600}
+.tag.bad{background:#3a1d16;color:var(--red);border:1px solid #6b3326}
+
+/* problema */
+.repos{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.repo{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;align-items:flex-start;min-height:150px}
+.repo .mem{margin-top:auto;border:1px dashed var(--muted);padding:3px 10px;border-radius:6px;color:var(--muted)}
+.repo .tag{min-height:1em}
+
+/* tabella */
+.tbl{display:flex;flex-direction:column}
+.trow{display:grid;grid-template-columns:1.15fr 1.25fr 1.6fr;gap:16px;padding:7px 4px;border-bottom:1px solid var(--border);font-size:calc(var(--fs-sm) - 4px);line-height:1.22;color:var(--dim)}
+.trow.thead{font-size:var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding-bottom:8px}
+.tname{color:var(--acc);font-weight:600}
+.tlim{color:var(--text)}
+
+/* livelli */
+.lvl{border-top-color:var(--c)}
+.lvl.l1{--c:var(--terra)} .lvl.l2{--c:var(--teal)} .lvl.l3{--c:var(--gold)}
+.lvl h3{color:var(--c)}
+dl{margin:0}
+dt{font-size:var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:12px}
+dd{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text);line-height:1.3}
+
+/* flussi */
+.flow{display:flex;gap:30px;align-items:stretch}
+.step{flex:1;position:relative;background:var(--card);border:1px solid var(--border);border-top:4px solid var(--acc);border-radius:10px;padding:16px 18px}
+.step+.step::before{content:"\2192";position:absolute;left:-27px;top:50%;transform:translateY(-50%);color:var(--acc);font-size:26px;line-height:1}
+.step h3{font-size:calc(var(--fs-h3) - 2px);margin-bottom:6px}
+.step p{font-size:var(--fs-xs);color:var(--dim);margin:0}
+.step .num{display:inline-block;font-size:var(--fs-xs);color:var(--muted);margin-bottom:4px}
+.flow.five .step p,.flow.verbs .step p{font-size:var(--fs-xs)}
+
+/* comandi */
+.cmds{display:flex;flex-direction:column;gap:12px}
+.crow{display:grid;grid-template-columns:1.1fr 1.4fr;gap:24px;align-items:baseline;padding:13px 4px;border-bottom:1px solid var(--border);font-size:var(--fs-sm)}
+.crow code{font-size:var(--fs-sm);color:var(--acc)}
+.crow span{color:var(--dim)}
+
+/* stack di 3 */
+.stack3{display:flex;flex-direction:column;gap:16px}
+.layer.l1{--acc:var(--blue)} .layer.l2{--acc:var(--teal)} .layer.l3{--acc:var(--gold)}
+.ideas .card{display:flex;gap:20px;align-items:baseline}
+.ideas .num{font-size:var(--fs-h2);font-family:'Fraunces',serif;color:var(--acc)}
+.ideas .card p{font-size:var(--fs-body);color:var(--text)}
+
+/* modelli */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.tier.t1{--acc:var(--teal)} .tier.t2{--acc:var(--blue)} .tier.t3{--acc:var(--purple)}
+.tier .small{color:var(--muted);margin-bottom:10px}
+
+/* specialisti */
+.spgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 28px}
+.sp{display:flex;flex-direction:column;gap:0;padding:7px 0;border-bottom:1px solid var(--border)}
+.sp code{font-size:var(--fs-xs);color:var(--blue)}
+.sp.o code{color:var(--purple)}
+.sp span{font-size:var(--fs-xs);color:var(--dim);line-height:1.25}
+
+/* gate */
+.stats{display:flex;gap:56px}
+.stat{display:flex;flex-direction:column}
+.stat .n{font-variant-numeric:lining-nums;font-family:'Fraunces',serif;font-size:var(--fs-h1);color:var(--acc);line-height:1}
+.gate-flow .step{padding:12px 18px}
+
+/* pattern, shell, codice */
+.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;font-size:var(--fs-sm);color:var(--dim)}
+.list li{padding-left:22px;position:relative;line-height:1.3}
+.list li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;background:var(--acc);border-radius:2px}
+.list.big{font-size:var(--fs-body);gap:18px;color:var(--text)}
+.reveal pre{width:100%;margin:0;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:none;font-size:var(--fs-code);line-height:1.5}
+.reveal pre code{max-height:none;padding:16px 20px;color:var(--text);font-size:1em;overflow:hidden;white-space:pre-wrap;word-break:break-word}
+.reveal pre.plain code,.reveal pre.shell code{color:var(--gold)}
+.hljs{background:transparent!important;color:var(--text)}
+.hljs-attr,.hljs-section,.hljs-title,.hljs-keyword,.hljs-name{color:var(--gold)}
+.hljs-string,.hljs-bullet,.hljs-code{color:var(--teal)}
+.hljs-comment,.hljs-quote{color:var(--muted)}
+.hljs-meta,.hljs-built_in,.hljs-literal,.hljs-number{color:var(--blue)}
+.hljs-emphasis,.hljs-strong{color:var(--terra)}
+.hljs-ln-numbers,.hljs-ln-n{display:none!important}
+.hljs-ln-code{padding-left:0!important}
+.reveal pre code.has-highlights tr:not(.highlight-line){opacity:.85}
+.reveal pre code .highlight-line{background:rgba(240,193,105,.12)}
+.excerpt pre{font-size:calc(var(--fs-code) - 2px)}
+.excerpt .src{color:var(--muted);margin:0 0 8px}
+
+/* fonte unica */
+.ftbl{display:flex;flex-direction:column}
+.frow{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:baseline;padding:13px 4px;border-bottom:1px solid var(--border);font-size:var(--fs-sm);color:var(--dim)}
+.frow code{font-size:var(--fs-sm)}
+
+/* link */
+.links li{padding-left:0}
+.links li::before{display:none}
+.links li{display:flex;flex-direction:column;gap:2px}
+.links .small{color:var(--muted)}
+.links a{font-size:var(--fs-sm);word-break:break-all}
+.qr{margin:0;text-align:center}
+.qr img{background:#fff;padding:10px;border-radius:12px;width:220px;height:220px}
+.qr figcaption{color:var(--muted);margin-top:8px}
+
+/* titolo */
+.title{justify-content:center!important}
+.title-wrap{display:flex;flex-direction:column;gap:20px}
+.title-wrap p{margin:0}
+.title .eyebrow{color:var(--gold)}
+.byline{color:var(--gold);font-size:var(--fs-sm)}
+.keys{color:var(--muted);font-size:var(--fs-xs)}
+
+/* lingua */
+html:not([lang="en"]) [lang="en"]{display:none!important}
+html[lang="en"] [lang="it"]{display:none!important}
+.lang{position:fixed;top:12px;right:14px;z-index:40;display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;font-family:'IBM Plex Mono',monospace}
+.lang button{font:600 13px 'IBM Plex Mono',monospace;letter-spacing:.08em;background:var(--card);color:var(--dim);border:0;padding:6px 11px;min-width:40px;min-height:32px;cursor:pointer}
+.lang button+button{border-left:1px solid var(--border)}
+.lang button[aria-pressed="true"]{background:var(--gold);color:#15120f}
+.lang button:hover:not([aria-pressed="true"]){background:var(--light);color:var(--text)}
+
+/* chrome di reveal */
+.reveal .progress{color:var(--gold);height:4px}
+.reveal .slide-number{background:transparent;color:var(--muted);font:500 14px 'IBM Plex Mono',monospace;right:auto;left:14px;bottom:10px}
+.reveal .controls{color:var(--gold)}
+.reveal .controls button{opacity:.85}
+.reveal .fragment{transition:opacity .25s ease,transform .25s ease}
+.reveal .fragment:not(.visible){opacity:0}
+.reveal .fragment.current-fragment{outline:0}
+
+/* portrait */
+html.portrait .reveal h2{margin-bottom:16px}
+html.portrait .body{gap:14px}
+html.portrait .cols2,html.portrait .cols3,html.portrait .tiers,html.portrait .repos{grid-template-columns:1fr;gap:12px}
+html.portrait .repos{grid-template-columns:repeat(3,1fr);gap:8px}
+html.portrait .repo{min-height:0;padding:10px;gap:8px}
+html.portrait .repo .small{font-size:15px}
+html.portrait .repo .tag{font-size:14px;padding:2px 8px}
+html.portrait .repo .mem{font-size:13px;padding:2px 6px}
+html.portrait .card{padding:12px 16px}
+html.portrait .flow{flex-direction:column;gap:20px}
+html.portrait .flow.five{gap:14px}
+html.portrait .step{padding:10px 14px}
+html.portrait .step+.step::before{content:"\2193";left:20px;top:-19px;transform:none;font-size:20px}
+html.portrait .flow.five .step+.step::before{top:-16px;font-size:16px}
+html.portrait .step h3{display:inline;margin-right:8px}
+html.portrait .step .num{margin-right:6px}
+html.portrait .trow{grid-template-columns:1fr;gap:2px;padding:8px 2px}
+html.portrait .trow.thead{display:none}
+html.portrait .tlim,html.portrait .tdo{font-size:18px;line-height:1.2}
+html.portrait .tname{font-size:20px}
+html.portrait .tbl .trow{padding:5px 2px;gap:0}
+html.portrait .crow,html.portrait .frow{grid-template-columns:1fr;gap:2px;padding:9px 2px}
+html.portrait .spgrid{grid-template-columns:1fr 1fr;gap:4px 14px}
+html.portrait .stats{gap:26px}
+html.portrait .qr img{width:150px;height:150px}
+html.portrait dt{margin-top:6px}
+html.portrait .lvl dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px}
+html.portrait .lvl dt{margin:0;align-self:baseline}
+html.portrait .lang{top:8px;right:8px}
+html.portrait .reveal pre code{padding:10px 12px}
+html.portrait .ideas .card{gap:12px}
+html.portrait .gate{padding:10px 14px}
+html.portrait .callout{font-size:var(--fs-sm)}
+html.portrait .tier .small{margin-bottom:2px}
+html.portrait .tier h3{margin-bottom:2px}
+html.print-pdf .reveal .slides section,html.reveal-print .reveal .slides section{padding:52px 72px!important;box-sizing:border-box}
+html.print-pdf,html.print-pdf body,html.print-pdf .pdf-page,html.reveal-print body{background:var(--bg)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;height:auto;overflow:visible}
+html.print-pdf .lang{display:none}
+@media print{.lang{display:none}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+noscript{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text);font:20px 'Public Sans',sans-serif;text-align:center;padding:24px}
+</style>
+</head>
+<body>
+<div class="lang" role="group" aria-label="Lingua / Language">
+  <button type="button" data-set-lang="it" aria-pressed="true" title="Italiano">IT</button>
+  <button type="button" data-set-lang="en" aria-pressed="false" title="English">EN</button>
+</div>
+<div class="reveal">
+<div class="slides">
+<section id="titolo" class="g-end title">
+
+<div class="title-wrap">
+  <p class="eyebrow mono">claude-kb-workflow · toolkit v0.4.1</p>
+  <h1><span lang="it">Conoscenza che attraversa i progetti</span><span lang="en">Knowledge that carries across projects</span></h1>
+  <p class="lead"><span lang="it">Come una sessione di lavoro con Claude Code lascia qualcosa di utile ai progetti successivi.</span><span lang="en">How one working session with Claude Code leaves something useful for the next projects.</span></p>
+  <p class="byline mono">Thomas Casali</p>
+  <p class="keys mono"><span lang="it">frecce o spazio: avanti · Esc: panoramica · S: note · L: lingua · ?: tutti i tasti</span><span lang="en">arrows or space: next · Esc: overview · S: notes · L: language · ?: all keys</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Per chi lavora con assistenti AI su più progetti, dal vivo o leggendo online. Ogni slide si regge da sola; qui nelle note ci sono i dettagli e gli esempi.</p><p>I fatti vengono dal toolkit pubblico alla versione 0.4.1 (CHANGELOG del 5 novembre 2026): README, docs, comandi, agenti, skill.</p><p>Link diretto a ogni slide: l'indirizzo cambia a ogni passaggio. Export PDF: aggiungere ?print-pdf all'indirizzo.</p></div><div lang="en"><p>For people who use AI assistants across several projects, live or reading online. Each slide stands on its own; the notes hold the details and examples.</p><p>The facts come from the public toolkit at version 0.4.1 (CHANGELOG, 5 November 2026): README, docs, commands, agents, skills.</p><p>Every slide has its own link: the address changes as you move. PDF export: add ?print-pdf to the address.</p></div></aside>
+</section>
+<section id="problema" class="g-problem">
+<p class="eyebrow mono"><span class="no">01</span> · <span lang="it">Il problema</span><span lang="en">The problem</span></p>
+<h2><span lang="it">Quello che impari in un repo non arriva agli altri</span><span lang="en">What you learn in one repo doesn't reach the others</span></h2>
+<div class="body">
+  <div class="repos">
+    <div class="repo"><span class="mono small"><span lang="it">progetto A</span><span lang="en">project A</span></span><span class="tag bad"><span lang="it">errore pagato</span><span lang="en">mistake paid for</span></span><span class="mem mono small">auto-memory</span></div>
+    <div class="repo fragment"><span class="mono small"><span lang="it">progetto B</span><span lang="en">project B</span></span><span class="tag bad"><span lang="it">lo stesso errore</span><span lang="en">same mistake</span></span><span class="mem mono small">auto-memory</span></div>
+    <div class="repo fragment"><span class="mono small"><span lang="it">progetto C</span><span lang="en">project C</span></span><span class="tag bad"><span lang="it">lo stesso errore</span><span lang="en">same mistake</span></span><span class="mem mono small">auto-memory</span></div>
+  </div>
+  <p class="lead"><span lang="it">L'auto-memory di Claude Code vale per un progetto e una macchina sola.</span><span lang="en">Claude Code's auto-memory covers one project on one machine.</span></p>
+  <p class="dim"><span lang="it">Su un computer nuovo si riparte da zero.</span><span lang="en">On a new computer you start from zero.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>L'auto-memory funziona bene. Il limite è lo scopo: ogni repo accumula i propri appunti, e quello che impari sul progetto A non arriva ai progetti da B a T.</p><p>Il README lo dice così: si ripetono gli stessi errori tra progetti, perché ognuno impara da solo.</p><p>Esempio: un bind mount di Docker che sovrascrive i permessi del container (pattern 7 del toolkit). Può costare un'ora o più, ogni volta che qualcuno lo reincontra senza averlo scritto da nessuna parte.</p></div><div lang="en"><p>Auto-memory works well. The limit is its scope: each repo collects its own notes, and what you learn on project A never reaches projects B to T.</p><p>The README puts it this way: you repeat the same mistakes across projects because each one learns alone.</p><p>Example: a Docker bind mount that overwrites container permissions (pattern 7 in the toolkit). It can cost an hour or more every time someone meets it again with nothing written down.</p></div></aside>
+</section>
+<section id="claude-da-solo" class="g-problem">
+<p class="eyebrow mono"><span class="no">02</span> · <span lang="it">E Claude Code da solo?</span><span lang="en">What about Claude Code alone?</span></p>
+<h2><span lang="it">E Claude Code da solo?</span><span lang="en">And Claude Code on its own?</span></h2>
+<div class="body">
+  <div class="tbl">
+    <div class="trow thead mono"><div><span lang="it">Funzione</span><span lang="en">Feature</span></div><div><span lang="it">Cosa fa</span><span lang="en">What it does</span></div><div><span lang="it">Limite</span><span lang="en">Limit</span></div></div>
+    <div class="trow"><div class="tname"><span lang="it">Auto memory</span><span lang="en">Auto memory</span></div><div class="tdo"><span lang="it">Appunti che Claude scrive da solo</span><span lang="en">Notes Claude writes on its own</span></div><div class="tlim"><span lang="it">Un progetto, una macchina, nessun controllo prima di salvare</span><span lang="en">One project, one machine, and nothing checks them before saving</span></div></div><div class="trow"><div class="tname"><span lang="it">Messaggi tra sessioni</span><span lang="en">Messages between sessions</span></div><div class="tdo"><span lang="it">Coordinano le sessioni in tempo reale</span><span lang="en">Coordinate sessions in real time</span></div><div class="tlim"><span lang="it">Non diventano conoscenza salvata, e una sessione cloud non può rispondere</span><span lang="en">Never become saved knowledge, and a cloud session cannot reply</span></div></div><div class="trow"><div class="tname"><span lang="it">Agent teams</span><span lang="en">Agent teams</span></div><div class="tdo"><span lang="it">Un lead, dei teammate, una task list condivisa</span><span lang="en">A lead, teammates, a shared task list</span></div><div class="tlim"><span lang="it">Sperimentali, si attivano con un flag</span><span lang="en">Experimental, enabled with a flag</span></div></div><div class="trow"><div class="tname"><span lang="it">Workflow dinamici</span><span lang="en">Dynamic workflows</span></div><div class="tdo"><span lang="it">Uno script orchestra molti agenti, salvabile nel repo</span><span lang="en">A script runs many agents, can be saved in the repo</span></div><div class="tlim"><span lang="it">Non ha memoria</span><span lang="en">No memory</span></div></div><div class="trow"><div class="tname"><span lang="it">Plugin di organizzazione</span><span lang="en">Organization plugins</span></div><div class="tdo"><span lang="it">Distribuiscono skill e agenti</span><span lang="en">Distribute skills and agents</span></div><div class="tlim"><span lang="it">Non distribuiscono i fatti</span><span lang="en">They don't distribute facts</span></div></div>
+  </div>
+  <p class="callout sm"><span lang="it">Nessuna porta quello che si impara in un progetto agli altri. Il repo resta l'unico canale condiviso, e il workflow si appoggia sopra queste funzioni.</span><span lang="en">None of them carries what you learn in one project to the others. The repo stays the only shared channel, and the workflow builds on top of these features.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Verificato sulla documentazione ufficiale il 7 novembre 2026.</p><ul><li>Auto memory: appunti in ~/.claude/projects/&lt;repo&gt;/memory/ (code.claude.com/docs/en/memory).</li><li>Messaggi tra sessioni: SendMessage e ListAgents, dalla versione 2.1.224 (7 agosto 2026).</li><li>Agent teams: sperimentali, attivi con un flag. Sono l'alternativa ufficiale all'orchestrazione descritta più avanti.</li><li>Workflow dinamici: dalla 2.1.154 (28 maggio 2026).</li><li>Plugin di organizzazione: portano skill e agenti, non i fatti imparati.</li></ul></div><div lang="en"><p>Checked against the official documentation on 7 November 2026.</p><ul><li>Auto memory: notes in ~/.claude/projects/&lt;repo&gt;/memory/ (code.claude.com/docs/en/memory).</li><li>Messages between sessions: SendMessage and ListAgents, since version 2.1.224 (7 August 2026).</li><li>Agent teams: experimental, enabled with a flag. They are the official alternative to the orchestration described later.</li><li>Dynamic workflows: since 2.1.154 (28 May 2026).</li><li>Organization plugins: they ship skills and agents, not the facts you learned.</li></ul></div></aside>
+</section>
+<section id="idea" class="g-know">
+<p class="eyebrow mono"><span class="no">03</span> · <span lang="it">L'idea</span><span lang="en">The idea</span></p>
+<h2><span lang="it">Una wiki compilata dall'AI, più un esame di promozione</span><span lang="en">A wiki the AI compiles, plus a promotion exam</span></h2>
+<div class="body">
+  <div class="cols2">
+    <div class="card"><h3>LLM Wiki</h3><p><span lang="it">L'AI trasforma le sessioni in pagine collegate tra loro. Cresce a ogni sessione.</span><span lang="en">The AI turns sessions into linked pages. It grows with every session.</span></p></div>
+    <div class="card"><h3><span lang="it">Esame di promozione</span><span lang="en">Promotion exam</span></h3><p><span lang="it">Una pagina entra nella KB stabile solo se lo supera. La KB resta piccola.</span><span lang="en">A page enters the stable KB only if it passes. The KB stays small.</span></p></div>
+  </div>
+  <p class="chain mono"><span lang="it">sessioni → wiki → KB stabile</span><span lang="en">sessions → wiki → stable KB</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>La LLM Wiki è il pattern di Karpathy. Il toolkit ne è un'implementazione con in più la promozione alla KB stabile: nei resoconti che ho trovato mancava questo livello.</p><p>Il documento del workflow usa un paragone con la memoria umana: la sessione è la memoria di lavoro, la wiki quella episodica, la KB stabile quella semantica.</p></div><div lang="en"><p>The LLM Wiki is Karpathy's pattern. The toolkit implements it and adds promotion to the stable KB: in the write-ups I found, that layer was missing.</p><p>The workflow doc uses a comparison with human memory: the session is working memory, the wiki is episodic, the stable KB is semantic.</p></div></aside>
+</section>
+<section id="livelli" class="g-know">
+<p class="eyebrow mono"><span class="no">04</span> · <span lang="it">I tre livelli</span><span lang="en">The three tiers</span></p>
+<h2><span lang="it">Sessione, wiki, KB stabile</span><span lang="en">Session, wiki, stable KB</span></h2>
+<div class="body"><div class="cols3">
+<div class="card lvl l1"><h3><span lang="it">Sessione</span><span lang="en">Session</span></h3>
+<dl><dt class="mono"><span lang="it">scrive</span><span lang="en">writes</span></dt><dd><span lang="it">tu e Claude, lavorando</span><span lang="en">you and Claude, while working</span></dd>
+<dt class="mono"><span lang="it">contiene</span><span lang="en">holds</span></dt><dd><span lang="it">commit, chat, note sparse</span><span lang="en">commits, chat, scattered notes</span></dd>
+<dt class="mono"><span lang="it">dura</span><span lang="en">lasts</span></dt><dd><span lang="it">fino a fine sessione</span><span lang="en">until the session ends</span></dd></dl></div>
+<div class="card lvl l2"><h3><span lang="it">Wiki</span><span lang="en">Wiki</span></h3>
+<dl><dt class="mono"><span lang="it">scrive</span><span lang="en">writes</span></dt><dd><span lang="it">Claude, con /kb-ingest</span><span lang="en">Claude, with /kb-ingest</span></dd>
+<dt class="mono"><span lang="it">contiene</span><span lang="en">holds</span></dt><dd><span lang="it">progetti, concetti, decisioni, lezioni (privata)</span><span lang="en">projects, concepts, decisions, lessons (private)</span></dd>
+<dt class="mono"><span lang="it">dura</span><span lang="en">lasts</span></dt><dd><span lang="it">cambia a ogni sessione</span><span lang="en">changes every session</span></dd></dl></div>
+<div class="card lvl l3"><h3><span lang="it">KB stabile</span><span lang="en">Stable KB</span></h3>
+<dl><dt class="mono"><span lang="it">scrive</span><span lang="en">writes</span></dt><dd><span lang="it">tu, con /kb-promote</span><span lang="en">you, with /kb-promote</span></dd>
+<dt class="mono"><span lang="it">contiene</span><span lang="en">holds</span></dt><dd><span lang="it">pattern, guide, agenti, skill (pubblicabile)</span><span lang="en">patterns, guides, agents, skills (publishable)</span></dd>
+<dt class="mono"><span lang="it">dura</span><span lang="en">lasts</span></dt><dd><span lang="it">cambia di rado</span><span lang="en">rarely changes</span></dd></dl></div>
+</div></div>
+<aside class="notes"><div lang="it"><p>La wiki cresce senza limite ed è privata, perché contiene dettagli dei clienti. La KB stabile è piccola per scelta e pubblicabile, perché è ripulita.</p><p>Regola d'oro del documento: se un'informazione cita un cliente o un sistema reali, resta in wiki. Sale in KB solo dopo essere stata astratta.</p></div><div lang="en"><p>The wiki grows without limit and is private, because it holds client details. The stable KB is small by choice and publishable, because it is sanitized.</p><p>The doc's golden rule: if a piece of knowledge names a real client or system, it stays in the wiki. It moves up to the KB only after being generalized.</p></div></aside>
+</section>
+<section id="viaggio" class="g-know">
+<p class="eyebrow mono"><span class="no">05</span> · <span lang="it">Il percorso di un fatto</span><span lang="en">How a fact travels</span></p>
+<h2><span lang="it">Dall'errore pagato alla KB</span><span lang="en">From a mistake paid for to the KB</span></h2>
+<div class="body"><div class="flow">
+<div class="step"><span class="num mono">1</span><h3><span lang="it">Sessione</span><span lang="en">Session</span></h3><p><span lang="it">Un bind mount di Docker sovrascrive i permessi. Un'ora persa.</span><span lang="en">A Docker bind mount overwrites permissions. An hour lost.</span></p></div>
+<div class="step fragment"><span class="num mono">2</span><h3><span lang="it">/kb-ingest</span><span lang="en">/kb-ingest</span></h3><p><span lang="it">Il grezzo va in raw/, la pagina del progetto si aggiorna.</span><span lang="en">The raw material goes to raw/, the project page is updated.</span></p></div>
+<div class="step fragment"><span class="num mono">3</span><h3><span lang="it">Wiki</span><span lang="en">Wiki</span></h3><p><span lang="it">Nasce un concetto in wiki/concepts/.</span><span lang="en">A concept appears in wiki/concepts/.</span></p></div>
+<div class="step fragment"><span class="num mono">4</span><h3><span lang="it">Esame</span><span lang="en">Exam</span></h3><p><span lang="it">/kb-promote controlla le condizioni.</span><span lang="en">/kb-promote checks the conditions.</span></p></div>
+<div class="step fragment"><span class="num mono">5</span><h3><span lang="it">KB stabile</span><span lang="en">Stable KB</span></h3><p><span lang="it">Un altro progetto lo ritrova prima di ripetere l'errore.</span><span lang="en">Another project finds it before repeating the mistake.</span></p></div>
+</div></div>
+<aside class="notes"><div lang="it"><p>Premere avanti per costruire il percorso un passo alla volta.</p><p>Ingest: legge git log e CURRENT_STATUS.md, salva il grezzo in raw/ (immutabile), aggiorna la pagina del progetto in wiki/projects/, aggiunge una riga a wiki/log.md.</p><p>Promote: se l'esame è superato copia il pattern nella KB, lascia nel concetto la nota "Promosso a ..." e registra l'operazione nei due repo. Il concetto non viene svuotato.</p></div><div lang="en"><p>Press forward to build the path one step at a time.</p><p>Ingest: reads git log and CURRENT_STATUS.md, saves the raw material in raw/ (immutable), updates the project page in wiki/projects/, appends a line to wiki/log.md.</p><p>Promote: if the exam passes it copies the pattern to the KB, leaves a "Promoted to ..." note in the concept and logs the operation in both repos. The concept is not emptied.</p></div></aside>
+</section>
+<section id="esame" class="g-know">
+<p class="eyebrow mono"><span class="no">06</span> · <span lang="it">L'esame di promozione</span><span lang="en">The promotion exam</span></p>
+<h2><span lang="it">Basta una di queste tre</span><span lang="en">Any one of these three is enough</span></h2>
+<div class="body">
+  <div class="cols3 exam">
+    <div class="card"><p><span lang="it">Usato da 2 o più progetti</span><span lang="en">Used by 2 or more projects</span></p></div>
+    <div class="card"><p><span lang="it">Un gotcha già pagato: costerebbe un'ora o più a chi lo reincontra</span><span lang="en">A gotcha already paid for: it would cost an hour or more to hit again</span></p></div>
+    <div class="card"><p><span lang="it">Uno standard che dichiari tu</span><span lang="en">A standard you declare</span></p></div>
+  </div>
+  <p class="gate"><span lang="it">E sempre: verificato in produzione o su un dispositivo reale.</span><span lang="en">And in every case: verified in production or on a real device.</span></p>
+  <p class="dim"><span lang="it">Non tutto subito in KB: resta piccola e autorevole. La wiki può essere provvisoria.</span><span lang="en">Not everything goes to the KB at once: it stays small and authoritative. The wiki can stay provisional.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Questa è la regola che applico, e che dalla 0.4.0 sostituisce la vecchia soglia fissa (2 o più progetti, 2 o più sessioni, verificato in produzione).</p><p>/kb-promote controlla anche che il pattern non sia già in patterns.md o in field-notes-it.md. Se l'esame non passa, si ferma e lo dice.</p></div><div lang="en"><p>This is the rule I apply. Since 0.4.0 it replaces the old fixed threshold (2+ projects, 2+ sessions, verified in production).</p><p>/kb-promote also checks that the pattern is not already in patterns.md or field-notes-it.md. If the exam fails, it stops and says so.</p></div></aside>
+</section>
+<section id="comandi" class="g-know">
+<p class="eyebrow mono"><span class="no">07</span> · <span lang="it">I comandi</span><span lang="en">The commands</span></p>
+<h2><span lang="it">Cinque comandi</span><span lang="en">Five commands</span></h2>
+<div class="body"><div class="cmds"><div class="crow"><code>/kb-ingest [progetto]</code><span><span lang="it">Porta una sessione nella wiki</span><span lang="en">Brings a session into the wiki</span></span></div><div class="crow"><code>/kb-query domanda</code><span><span lang="it">Risponde dalla wiki, citando le pagine</span><span lang="en">Answers from the wiki, citing pages</span></span></div><div class="crow"><code>/kb-promote concetto</code><span><span lang="it">Esame di promozione e passaggio alla KB</span><span lang="en">Promotion exam and move to the KB</span></span></div><div class="crow"><code>/kb-lint</code><span><span lang="it">Controlla la wiki: link rotti, pagine vecchie, candidati</span><span lang="en">Checks the wiki: broken links, stale pages, candidates</span></span></div><div class="crow"><code>/kb-output pagina --slides</code><span><span lang="it">Esporta in Marp, riassunto o report</span><span lang="en">Exports to Marp, summary or report</span></span></div></div></div>
+<aside class="notes"><div lang="it"><p>Ingest dopo una sessione importante, un bug risolto o una decisione. Query quando vuoi ricordare qualcosa senza rileggere il progetto. Lint ogni settimana, o quando la wiki sembra rumorosa: segnala pagine senza data, link rotti, pagine ferme da più di 30 giorni e candidati alla promozione. Output scrive in wiki/output/, che è nel .gitignore.</p></div><div lang="en"><p>Ingest after an important session, a fixed bug or a decision. Query when you want to recall something without rereading the project. Lint weekly, or when the wiki feels noisy: it flags undated pages, broken links, pages untouched for over 30 days and promotion candidates. Output writes to wiki/output/, which is in .gitignore.</p></div></aside>
+</section>
+<section id="inizio-sessione" class="g-agents">
+<p class="eyebrow mono"><span class="no">08</span> · <span lang="it">Inizio sessione</span><span lang="en">Session start</span></p>
+<h2><span lang="it">Cosa legge l'AI prima di cominciare</span><span lang="en">What the AI reads before it starts</span></h2>
+<div class="body"><div class="stack3">
+<div class="card layer l1"><h3><span lang="it">CLAUDE.md globale</span><span lang="en">Global CLAUDE.md</span></h3><p><span lang="it">La formula del lead, il routing, il gate del reviewer.</span><span lang="en">The lead's formula, routing, the reviewer gate.</span></p></div>
+<div class="card layer l2"><h3><span lang="it">CLAUDE.md di progetto</span><span lang="en">Project CLAUDE.md</span></h3><p><span lang="it">Istruzioni per lavorare in quel repo. Niente versioni, niente stato.</span><span lang="en">Instructions for working in that repo. No versions, no status.</span></p></div>
+<div class="card layer l3"><h3><span lang="it">KB</span><span lang="en">KB</span></h3><p><span lang="it">Pattern e guide, consultati quando il lavoro li richiama.</span><span lang="en">Patterns and guides, consulted when the work calls for them.</span></p></div>
+</div></div>
+<aside class="notes"><div lang="it"><p>Il CLAUDE.md globale vive in ~/.claude/ e viene caricato a ogni sessione. Contiene la politica di orchestrazione, non l'elenco degli agenti: gli agenti si scoprono da soli dalla loro description.</p><p>Quello di progetto non porta versioni né stato, che stanno nella pagina wiki del progetto (vedi fonte unica).</p></div><div lang="en"><p>The global CLAUDE.md lives in ~/.claude/ and loads in every session. It holds the orchestration policy, not a list of agents: agents are discovered on their own from their description.</p><p>The project one carries no versions or status; those live in the project's wiki page (see single source of truth).</p></div></aside>
+</section>
+<section id="lead" class="g-agents">
+<p class="eyebrow mono"><span class="no">09</span> · <span lang="it">Il lead</span><span lang="en">The lead</span></p>
+<h2><span lang="it">Il lead pianifica e delega, non esegue</span><span lang="en">The lead plans and delegates, it doesn't execute</span></h2>
+<div class="body">
+  <div class="flow verbs">
+    <div class="step"><span class="num mono">1</span><h3><span lang="it">Pianifica</span><span lang="en">Plans</span></h3><p><span lang="it">Mostra il piano prima di agire.</span><span lang="en">Shows the plan before acting.</span></p></div>
+    <div class="step fragment"><span class="num mono">2</span><h3><span lang="it">Scompone</span><span lang="en">Splits</span></h3><p><span lang="it">In fasi che si possono delegare.</span><span lang="en">Into phases that can be delegated.</span></p></div>
+    <div class="step fragment"><span class="num mono">3</span><h3><span lang="it">Delega</span><span lang="en">Delegates</span></h3><p><span lang="it">Ai subagent, ognuno col suo contesto.</span><span lang="en">To subagents, each with its own context.</span></p></div>
+    <div class="step fragment"><span class="num mono">4</span><h3><span lang="it">Sintetizza</span><span lang="en">Synthesizes</span></h3><p><span lang="it">Integra i risultati.</span><span lang="en">Merges the results.</span></p></div>
+  </div>
+  <p class="dim"><span lang="it">Il contesto del lead resta pulito. Per i lavori banali si fa direttamente, senza cerimonia.</span><span lang="en">The lead's context stays clean. Trivial jobs are done directly, no ceremony.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Il vantaggio non è solo il parallelismo: i dettagli (file letti, tentativi, output dei test) restano nei contesti usa e getta dei subagent.</p><p>Esempio: per mesi ho creduto di avere dieci specialisti attivi. Il frontmatter dei file era rovinato da un editor (\--- al posto di ---) e nessuno veniva caricato; il lead improvvisava. Nelle versioni precedenti di queste slide lo chiamavo "l'errore di 4 caratteri". Controllo in 30 secondi: chiedere al lead quali subagent ha a disposizione.</p></div><div lang="en"><p>The benefit is not only parallelism: the details (files read, attempts, test output) stay in the subagents' throwaway contexts.</p><p>Example: for months I believed ten specialists were active. An editor had corrupted the files' frontmatter (\--- instead of ---), none loaded, and the lead was improvising. Earlier versions of these slides called it "the 4-character mistake". Check in 30 seconds: ask the lead which subagents it has.</p></div></aside>
+</section>
+<section id="modelli" class="g-agents">
+<p class="eyebrow mono"><span class="no">10</span> · <span lang="it">Tre livelli di modello</span><span lang="en">Three model tiers</span></p>
+<h2><span lang="it">Si parte da Haiku e si sale per un motivo</span><span lang="en">Start with Haiku, move up for a reason</span></h2>
+<div class="body">
+  <div class="tiers">
+  <div class="card tier t1"><h3>Haiku</h3><p class="mono small"><span lang="it">quick-worker · default</span><span lang="en">quick-worker · default</span></p><p><span lang="it">Lavori piccoli e chiusi, che un test o un comando prova.</span><span lang="en">Small, closed jobs that a test or a command can prove.</span></p></div>
+  <div class="card tier t2 fragment"><h3>Sonnet</h3><p class="mono small"><span lang="it">fast-worker + specialisti</span><span lang="en">fast-worker + specialists</span></p><p><span lang="it">Causa da trovare, scelta tra approcci, modifiche ampie.</span><span lang="en">A cause to find, a choice between approaches, wide changes.</span></p></div>
+  <div class="card tier t3 fragment"><h3>Opus</h3><p class="mono small"><span lang="it">deep-reasoner, reviewer, security</span><span lang="en">deep-reasoner, reviewer, security</span></p><p><span lang="it">Design, piani, secondo parere, gate finale.</span><span lang="en">Design, plans, second opinion, final gate.</span></p></div>
+  </div>
+  <p class="callout"><span lang="it">Se un livello torna incompleto, il lavoro sale a quello sopra, con il lavoro già fatto allegato.</span><span lang="en">If a tier comes back incomplete, the job moves up one tier with the work done so far attached.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Si usa il modello più economico che basta. Limiti di Haiku: niente ssh né comandi su server di produzione (lì va devops), niente file con segreti, mai il gate finale. Un dominio con pattern propri (backend, mobile, deploy) va al suo specialista anche se il lavoro è piccolo.</p><p>Il rilancio funziona così: quick-worker incompleto passa a fast-worker; fast-worker che fallisce passa a deep-reasoner.</p></div><div lang="en"><p>The cheapest model that is enough. Haiku limits: no ssh or commands on production servers (that goes to devops), no files with secrets, never the final gate. A domain with its own patterns (backend, mobile, deploy) goes to its specialist even when the job is small.</p><p>Relaunch works like this: an incomplete quick-worker goes to fast-worker; a failing fast-worker goes to deep-reasoner.</p></div></aside>
+</section>
+<section id="specialisti" class="g-agents">
+<p class="eyebrow mono"><span class="no">11</span> · <span lang="it">Gli specialisti</span><span lang="en">The specialists</span></p>
+<h2><span lang="it">Dieci specialisti, scelti dalla description</span><span lang="en">Ten specialists, picked by description</span></h2>
+<div class="body">
+  <div class="spgrid"><div class="sp s"><code>backend-dev</code><span><span lang="it">Laravel, Node.js</span><span lang="en">Laravel, Node.js</span></span></div><div class="sp s"><code>frontend-dev</code><span><span lang="it">Vue, React</span><span lang="en">Vue, React</span></span></div><div class="sp s"><code>mobile-dev</code><span><span lang="it">Flutter</span><span lang="en">Flutter</span></span></div><div class="sp s"><code>devops</code><span><span lang="it">Docker, Traefik, VPS</span><span lang="en">Docker, Traefik, VPS</span></span></div><div class="sp s"><code>database</code><span><span lang="it">MySQL, PostgreSQL, MongoDB, Firestore</span><span lang="en">MySQL, PostgreSQL, MongoDB, Firestore</span></span></div><div class="sp s"><code>integrations</code><span><span lang="it">Stripe, email, push, Telegram</span><span lang="en">Stripe, email, push, Telegram</span></span></div><div class="sp s"><code>realtime-dev</code><span><span lang="it">Socket.io, WebSocket, MQTT</span><span lang="en">Socket.io, WebSocket, MQTT</span></span></div><div class="sp s"><code>ci-cd</code><span><span lang="it">GitHub Actions, firma, store</span><span lang="en">GitHub Actions, signing, stores</span></span></div><div class="sp o"><code>reviewer</code><span><span lang="it">review e debug: il gate</span><span lang="en">review and debug: the gate</span></span></div><div class="sp o"><code>security</code><span><span lang="it">JWT, auth, CORS</span><span lang="en">JWT, auth, CORS</span></span></div></div>
+  <p class="dim"><span lang="it">Il lead sceglie leggendo nome e description di ogni agente. Se delega male, si corregge la description. L'alternativa ufficiale sono gli agent teams, sperimentali.</span><span lang="en">The lead picks by reading each agent's name and description. If it delegates badly, fix the description. The official alternative is agent teams, which are experimental.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Otto specialisti girano su Sonnet (backend-dev, frontend-dev, mobile-dev, devops, database, integrations, realtime-dev, ci-cd), due su Opus (reviewer, security). Con i tre orchestratori il pool è di 13 agenti.</p><p>Regola del documento: la delega resta piatta, cioè delega solo il lead. Un subagent che delega a sua volta moltiplica token e latenza e fa perdere il controllo della sintesi.</p></div><div lang="en"><p>Eight specialists run on Sonnet (backend-dev, frontend-dev, mobile-dev, devops, database, integrations, realtime-dev, ci-cd), two on Opus (reviewer, security). With the three orchestrators the pool has 13 agents.</p><p>Rule from the doc: delegation stays flat, so only the lead delegates. A subagent that delegates in turn multiplies tokens and latency and loses control of the synthesis.</p></div></aside>
+</section>
+<section id="gate" class="g-quality">
+<p class="eyebrow mono"><span class="no">12</span> · <span lang="it">Il gate</span><span lang="en">The gate</span></p>
+<h2><span lang="it">Prima di dire «fatto» passa dal reviewer</span><span lang="en">Before saying “done”, it goes through the reviewer</span></h2>
+<div class="body">
+  <div class="flow gate-flow">
+    <div class="step"><span class="num mono">1</span><h3><span lang="it">Lead</span><span lang="en">Lead</span></h3><p><span lang="it">Ha finito il lavoro.</span><span lang="en">Has finished the work.</span></p></div>
+    <div class="step"><span class="num mono">2</span><h3><span lang="it">Reviewer</span><span lang="en">Reviewer</span></h3><p><span lang="it">Rilegge con un contesto pulito.</span><span lang="en">Rereads with a clean context.</span></p></div>
+    <div class="step"><span class="num mono">3</span><h3><span lang="it">Fatto</span><span lang="en">Done</span></h3><p><span lang="it">Solo dopo il suo esito.</span><span lang="en">Only after its verdict.</span></p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><span class="n">26</span><span class="small"><span lang="it">errori trovati</span><span lang="en">errors found</span></span></div>
+    <div class="stat"><span class="n">4</span><span class="small"><span lang="it">bloccanti</span><span lang="en">blocking</span></span></div>
+    <div class="stat"><span class="n">1</span><span class="small"><span lang="it">scritto dal lead</span><span lang="en">written by the lead</span></span></div>
+  </div>
+  <p class="dim"><span lang="it">Il collaudo della v0.2. L'errore del lead, un limite tecnico che non esisteva, l'ha smentito il reviewer.</span><span lang="en">The v0.2 review. The lead's error, a technical limit that did not exist, was disproved by the reviewer.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Il gate obbligatorio è, secondo il documento di orchestrazione, la singola modifica che rende di più: costringe a una seconda lettura con contesto pulito.</p><p>Il caso: il lead aveva scritto che un subagent non può delegare ad altri subagent, presentandolo come limite tecnico. Il reviewer, che è un subagent, ha fatto notare di avere lo strumento di delega tra i propri. La regola è stata riscritta come scelta di progetto (delega piatta) e corretta ovunque comparisse.</p></div><div lang="en"><p>According to the orchestration doc, the mandatory gate is the single change that pays off most: it forces a second read with a clean context.</p><p>The case: the lead had written that a subagent cannot delegate to other subagents, presented as a technical limit. The reviewer, which is a subagent, pointed out it had the delegation tool among its own. The rule was rewritten as a design choice (flat delegation) and fixed everywhere it appeared.</p></div></aside>
+</section>
+<section id="review-log" class="g-quality">
+<p class="eyebrow mono"><span class="no">13</span> · <span lang="it">Review log</span><span lang="en">Review log</span></p>
+<h2><span lang="it">Si rivede solo quello che è cambiato</span><span lang="en">Only what changed gets reviewed</span></h2>
+<div class="body">
+  <div class="flow compact">
+    <div class="step"><span class="num mono">1</span><h3><span lang="it">Leggi</span><span lang="en">Read</span></h3><p><span lang="it">L'ultimo SHA nel log.</span><span lang="en">The last SHA in the log.</span></p></div>
+    <div class="step fragment"><span class="num mono">2</span><h3><span lang="it">Rivedi</span><span lang="en">Review</span></h3><p><span lang="it">Solo il diff da quello SHA.</span><span lang="en">Only the diff since that SHA.</span></p></div>
+    <div class="step fragment"><span class="num mono">3</span><h3><span lang="it">Aggiungi</span><span lang="en">Append</span></h3><p><span lang="it">Una voce con il nuovo SHA.</span><span lang="en">An entry with the new SHA.</span></p></div>
+  </div>
+  <pre class="plain"><code>git diff &lt;ultimo-sha&gt;..HEAD</code></pre>
+  <p class="dim"><span lang="it">Il log sta in project-memories/<progetto>.md, mai nel docs/ del repo. Senza log, prima review completa.</span><span lang="en">The log lives in project-memories/&lt;project&gt;.md, never in the repo's docs/. With no log, the first review is a full one.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Ogni voce ha data, SHA rivisto, esito e finding ancora aperti. I finding aperti si riportano nella voce successiva finché qualcuno li chiude. Si registra lo SHA rivisto, non uno più recente. Se la storia è stata riscritta e lo SHA non esiste più, si tratta come log mancante. Esempio dal documento: 2026-09-20, e4f5a6b, diff a1b2c3d..e4f5a6b, approvato, "rate limit su /export da decidere".</p></div><div lang="en"><p>Each entry has a date, the reviewed SHA, the outcome and the findings still open. Open findings carry into the next entry until someone closes them. Log the SHA that was reviewed, not a later one. If history was rewritten and the SHA no longer exists, treat it as a missing log. Example from the doc: 2026-09-20, e4f5a6b, diff a1b2c3d..e4f5a6b, approved, "rate limit on /export not yet decided".</p></div></aside>
+</section>
+<section id="skill" class="g-quality">
+<p class="eyebrow mono"><span class="no">14</span> · <span lang="it">Le skill di metodo</span><span lang="en">Method skills</span></p>
+<h2><span lang="it">Tre skill che si attivano dalla description</span><span lang="en">Three skills triggered by their description</span></h2>
+<div class="body">
+  <div class="cols3 skills"><div class="card"><code>debugging-sistematico</code><p><span lang="it">La causa radice prima del fix.</span><span lang="en">Root cause before the fix.</span></p></div><div class="card"><code>verifica-prima-di-completare</code><p><span lang="it">L'evidenza prima di dire «fatto».</span><span lang="en">Evidence before saying “done”.</span></p></div><div class="card"><code>brainstorming-design</code><p><span lang="it">Ci si allinea sul design prima di scrivere codice.</span><span lang="en">Agree on the design before writing code.</span></p></div></div>
+  <p class="callout"><span lang="it">Questa presentazione è partita da brainstorming-design.</span><span lang="en">This presentation started from brainstorming-design.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Le skill non sono regole imperative: si attivano quando la description corrisponde alla richiesta. Se una dà fastidio si restringe la description, se non scatta la si allarga.</p><p>Sono adattamenti in italiano, più morbidi, di skill di obra/superpowers e mattpocock/skills (entrambi MIT). Il toolkit ne contiene sei in tutto, con deploy-production, flutter-production e educational-presentation.</p></div><div lang="en"><p>Skills are not imperative rules: they trigger when the description matches the request. If one gets in the way you narrow its description, if it never fires you widen it.</p><p>They are softened Italian adaptations of skills from obra/superpowers and mattpocock/skills (both MIT). The toolkit has six in total, adding deploy-production, flutter-production and educational-presentation.</p></div></aside>
+</section>
+<section id="pattern" class="g-know">
+<p class="eyebrow mono"><span class="no">15</span> · <span lang="it">I pattern</span><span lang="en">Patterns</span></p>
+<h2><span lang="it">16 problemi risolti, scritti in forma generica</span><span lang="en">16 solved problems, written in generic form</span></h2>
+<div class="body">
+  <div class="cols2">
+    <ul class="list">
+      <li><span lang="it">Laravel: route [login] not defined</span><span lang="en">Laravel: route [login] not defined</span></li>
+      <li><span lang="it">Node.js: ordine delle route</span><span lang="en">Node.js: route ordering</span></li>
+      <li><span lang="it">Docker: i bind mount e i permessi</span><span lang="en">Docker: bind mounts and permissions</span></li>
+      <li><span lang="it">Socket.io: disconnessioni</span><span lang="en">Socket.io: disconnects</span></li>
+      <li><span lang="it">Webhook di pagamento idempotenti</span><span lang="en">Idempotent payment webhooks</span></li>
+    </ul>
+    <pre><code class="language-javascript" data-trim data-line-numbers="2,3">// Right: specific routes first
+router.get('/stats', getStats);
+router.get('/:id', getById);
+// last: it's a catch-all</code></pre>
+  </div>
+  <p class="dim"><span lang="it">Ognuno con problema, fix e codice. Vengono da bug in produzione.</span><span lang="en">Each with the problem, the fix and code. They come from production bugs.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>I pattern stanno in patterns/patterns.md (in inglese). Altri esempi: un gotcha di Flutter con Stripe su Android, il blocco di Cloudflare sugli IP dei datacenter aggirato con un client WARP, SaaS multi-tenant su un solo database, push web con FCM HTTP v1 senza SDK lato server.</p><p>patterns/field-notes-it.md contiene invece le mie convenzioni personali (script di deploy, nomi delle variabili): è lì come esempio di file di convenzioni, non come consiglio.</p></div><div lang="en"><p>Patterns live in patterns/patterns.md. More examples: a Flutter plus Stripe gotcha on Android, Cloudflare blocking datacenter IPs worked around with a self-hosted WARP client, multi-tenant SaaS on a single database, web push through FCM HTTP v1 without the server SDK.</p><p>patterns/field-notes-it.md holds my personal conventions (deploy scripts, variable names): it is there as an example of a conventions file, not as advice.</p></div></aside>
+</section>
+<section id="fonte-unica" class="g-know">
+<p class="eyebrow mono"><span class="no">16</span> · <span lang="it">Fonte unica</span><span lang="en">Single source</span></p>
+<h2><span lang="it">Ogni informazione ha una casa sola</span><span lang="en">Every piece of information has one home</span></h2>
+<div class="body">
+  <div class="ftbl"><div class="frow"><span><span lang="it">Stato attuale del progetto</span><span lang="en">Current state of a project</span></span><code>wiki/projects/&lt;slug&gt;.md</code></div><div class="frow"><span><span lang="it">Fatti stabili del progetto</span><span lang="en">Stable facts of a project</span></span><code>project-memories/&lt;slug&gt;.md</code></div><div class="frow"><span><span lang="it">Istruzioni di lavoro del repo</span><span lang="en">Working instructions for a repo</span></span><code>CLAUDE.md del repo</code></div><div class="frow"><span><span lang="it">I tuoi feedback a Claude</span><span lang="en">Your feedback to Claude</span></span><code>auto-memory locale</code></div><div class="frow"><span><span lang="it">Segreti</span><span lang="en">Secrets</span></span><code>password manager o .env del server</code></div></div>
+  <p class="callout"><span lang="it">Gli altri posti linkano, non copiano.</span><span lang="en">Every other place links, it doesn't copy.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Senza una tabella lo stesso fatto finisce in quattro posti, uno viene aggiornato e gli altri invecchiano in silenzio. La tabella completa ha più righe: infrastruttura condivisa, procedure operative, decisioni trasversali, lezioni datate, note di sessioni temporanee. Stato e fatti sono file diversi: "cosa è live oggi" cambia ogni settimana, "su che stack gira" raramente. Per i segreti anche il puntatore dice dove sta il segreto, mai il valore.</p></div><div lang="en"><p>Without a table the same fact ends up in four places, one gets updated and the rest quietly go stale. The full table has more rows: shared infrastructure, operating procedures, cross-project decisions, dated lessons, notes from temporary sessions. State and facts are different files: "what is live today" changes weekly, "what stack it runs on" rarely. For secrets even the pointer says where the secret is, never its value.</p></div></aside>
+</section>
+<section id="ripristino" class="g-quality">
+<p class="eyebrow mono"><span class="no">17</span> · <span lang="it">Sicurezza e ripristino</span><span lang="en">Security and recovery</span></p>
+<h2><span lang="it">Nessun segreto nei repo, e un ripristino provato</span><span lang="en">No secrets in repos, and a tested restore</span></h2>
+<div class="body">
+  <div class="cols2">
+    <div class="card"><h3><span lang="it">Scanner anti-segreti</span><span lang="en">Secret scanner</span></h3><p><span lang="it">Gira come hook pre-commit sui file in staging.</span><span lang="en">Runs as a pre-commit hook on staged files.</span></p></div>
+    <div class="card"><h3><span lang="it">Test di ripristino</span><span lang="en">Restore test</span></h3><p><span lang="it">Su una HOME temporanea vuota. Il primo test è fallito e ha mostrato quattro difetti.</span><span lang="en">On an empty temporary HOME. The first run failed and exposed four defects.</span></p></div>
+  </div>
+  <p class="dim"><span lang="it">Anche senza ingest regolari, i transcript locali si leggono con agenti in parallelo e ricostruiscono mesi di lavoro in circa un'ora.</span><span lang="en">Even without regular ingests, local transcripts can be read by parallel agents and rebuild months of work in about an hour.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Segreti solo nel password manager o nel .env dei server. Conoscenza e codice stanno in repo Git privati; transcript e cache sono usa e getta.</p><p>I quattro difetti del primo dry-run: lo script moriva a metà senza errori visibili; copie superficiali (le skill senza data/ e scripts/); sovrascritture di file di altri sistemi; un file promesso nel README mai versionato.</p><p>Esempio personale: tre mesi di lavoro su quindici progetti senza traccia centrale, ricostruiti in circa un'ora con dieci agenti in lettura, uno per gruppo di transcript.</p><p>Limite noto dello scanner: un file con byte NUL, senza BOM e con estensione binaria viene saltato senza avviso.</p></div><div lang="en"><p>Secrets only in the password manager or on servers' .env. Knowledge and code sit in private Git repos; transcripts and cache are disposable.</p><p>The four defects of the first dry run: the script died halfway with no visible error; shallow copies (skills without data/ and scripts/); overwrites of other systems' files; a file promised in the README that was never versioned.</p><p>Personal example: three months of work across fifteen projects with no central record, rebuilt in about an hour with ten reading agents, each on a group of transcripts.</p><p>Known scanner limit: a file with NUL bytes, no BOM and a binary extension is skipped without a warning.</p></div></aside>
+</section>
+<section id="sessione" class="g-agents">
+<p class="eyebrow mono"><span class="no">18</span> · <span lang="it">Una sessione</span><span lang="en">One session</span></p>
+<h2><span lang="it">Una sessione, dall'inizio alla fine</span><span lang="en">One session, start to finish</span></h2>
+<div class="body"><div class="flow five">
+<div class="step"><span class="num mono">1</span><h3><span lang="it">Richiesta</span><span lang="en">Request</span></h3><p><span lang="it">Il lead legge CLAUDE.md e la KB.</span><span lang="en">The lead reads CLAUDE.md and the KB.</span></p></div>
+<div class="step fragment"><span class="num mono">2</span><h3><span lang="it">Piano</span><span lang="en">Plan</span></h3><p><span lang="it">Lo mostra, poi scompone.</span><span lang="en">Shows it, then splits the work.</span></p></div>
+<div class="step fragment"><span class="num mono">3</span><h3><span lang="it">Agenti</span><span lang="en">Agents</span></h3><p><span lang="it">Livello giusto o specialista.</span><span lang="en">The right tier or specialist.</span></p></div>
+<div class="step fragment"><span class="num mono">4</span><h3><span lang="it">Review</span><span lang="en">Review</span></h3><p><span lang="it">Il reviewer sul diff.</span><span lang="en">The reviewer on the diff.</span></p></div>
+<div class="step fragment"><span class="num mono">5</span><h3><span lang="it">Ingest</span><span lang="en">Ingest</span></h3><p><span lang="it">/kb-ingest: la wiki si aggiorna.</span><span lang="en">/kb-ingest: the wiki is updated.</span></p></div>
+</div></div>
+<aside class="notes"><div lang="it"><p>Premere avanti per ogni fase. Il lead non comincia da zero: ha letto le istruzioni e sa dove cercare in KB. Dopo il gate, l'ingest chiude il cerchio: quello che è emerso nella sessione entra in wiki e, se supera l'esame, un giorno in KB. Per un lavoro banale si salta tutto e si risponde direttamente.</p></div><div lang="en"><p>Press forward for each phase. The lead does not start from zero: it has read the instructions and knows where to look in the KB. After the gate, ingest closes the loop: what came up in the session goes into the wiki and, if it passes the exam, one day into the KB. For a trivial job all of this is skipped and the lead just answers.</p></div></aside>
+</section>
+<section id="limiti" class="g-end">
+<p class="eyebrow mono"><span class="no">19</span> · <span lang="it">I limiti</span><span lang="en">Limits</span></p>
+<h2><span lang="it">Cosa resta fuori</span><span lang="en">What is left out</span></h2>
+<div class="body"><ul class="list big"><li><span lang="it">Provato solo su Claude Code.</span><span lang="en">Tried only on Claude Code.</span></li><li><span lang="it">Lo scanner è stato testato su Git Bash per Windows e Ubuntu 22.04 in WSL, mai su macOS.</span><span lang="en">The scanner was tested on Git Bash for Windows and Ubuntu 22.04 in WSL, never on macOS.</span></li><li><span lang="it">Il workflow CI di esempio non è mai stato eseguito: i blocchi YAML sono solo stati analizzati.</span><span lang="en">The example CI workflow was never run: its YAML blocks were only parsed.</span></li><li><span lang="it">Contenuto di agenti e skill in italiano. Le traduzioni inglesi sono benvenute.</span><span lang="en">Agent and skill content is in Italian. English translations are welcome.</span></li><li><span lang="it">Orchestrare costa token e latenza: per lavori banali non conviene.</span><span lang="en">Orchestrating costs tokens and latency: not worth it for trivial jobs.</span></li></ul></div>
+<aside class="notes"><div lang="it"><p>Fonti: CHANGELOG 0.4.0 e 0.4.1 (test dello scanner, workflow CI), README (FAQ "Does this only work with Claude Code?": la parte più legata a Claude Code sono i meccanismi dei subagent, i prompt di ruolo e le politiche dovrebbero portarsi altrove, ma non l'ho provato). Il toolkit è pensato per chi mantiene da solo molti progetti non collegati.</p></div><div lang="en"><p>Sources: CHANGELOG 0.4.0 and 0.4.1 (scanner tests, CI workflow), README (FAQ "Does this only work with Claude Code?": the most Claude Code-specific part is the subagent mechanics; the role prompts and policies should port elsewhere, but I have not tried it). The toolkit is aimed at people who maintain many unrelated projects alone.</p></div></aside>
+</section>
+<section id="provalo" class="g-end">
+<p class="eyebrow mono"><span class="no">20</span> · <span lang="it">Come provarlo</span><span lang="en">Try it</span></p>
+<h2><span lang="it">Installazione e primo comando</span><span lang="en">Install and first command</span></h2>
+<div class="body">
+<pre class="shell"><code class="language-bash" data-trim>git clone https://github.com/thomascasali/claude-kb-workflow.git
+cd claude-kb-workflow
+./scripts/install.sh</code></pre>
+<p><span lang="it">Riavvia Claude Code e chiedi:</span><span lang="en">Restart Claude Code and ask:</span></p>
+<pre class="shell"><code class="language-plaintext" data-trim>Show me the agent decision tree</code></pre>
+<p class="dim"><span lang="it">Agenti, pattern e skill funzionano anche senza wiki. Per la pipeline: copia llm-wiki-template in ~/llm-wiki, imposta LLM_WIKI_PATH e lancia /kb-ingest nome-progetto.</span><span lang="en">Agents, patterns and skills work without the wiki. For the pipeline: copy llm-wiki-template to ~/llm-wiki, set LLM_WIKI_PATH and run /kb-ingest project-name.</span></p>
+</div>
+<aside class="notes"><div lang="it"><p>Dal README. Lo script copia agenti, pattern, skill e comandi in ~/.claude/ (su Windows C:\Users\&lt;tu&gt;\.claude\). Serve bash: Git Bash o WSL su Windows. Il primo comando è la frase del README, in inglese. Controllo di salute: chiedere al lead quali subagent ha; se non compaiono, il frontmatter non viene letto.</p></div><div lang="en"><p>From the README. The script copies agents, patterns, skills and commands into ~/.claude/ (on Windows C:\Users\&lt;you&gt;\.claude\). It needs bash: Git Bash or WSL on Windows. The first prompt is the README's own sentence. Health check: ask the lead which subagents it has; if yours do not show up, the frontmatter is not parsing.</p></div></aside>
+</section>
+<section id="tre-idee" class="g-end">
+<p class="eyebrow mono"><span class="no">21</span> · <span lang="it">Da portare via</span><span lang="en">Take away</span></p>
+<h2><span lang="it">Tre idee anche senza il toolkit</span><span lang="en">Three ideas even without the toolkit</span></h2>
+<div class="body"><div class="stack3 ideas"><div class="card"><span class="num mono">1</span><p><span lang="it">Scrivi dove sta ogni informazione, una volta sola.</span><span lang="en">Write down where each piece of information lives, once.</span></p></div><div class="card"><span class="num mono">2</span><p><span lang="it">Prima di fidarti di una nota, falla passare da un esame.</span><span lang="en">Before trusting a note, make it pass an exam.</span></p></div><div class="card"><span class="num mono">3</span><p><span lang="it">Prova che il sistema funziona: un controllo di salute, un ripristino a vuoto.</span><span lang="en">Prove the system works: a health check, a dry-run restore.</span></p></div></div></div>
+<aside class="notes"><div lang="it"><p>Il metodo si copia comunque; l'esperienza no. Le tre idee non dipendono da Claude Code: una tabella delle fonti, una regola di promozione, e la prova che i sistemi automatici fanno quello che pare. Il frontmatter rovinato non dava errori e il ripristino lasciava metà dei file: "sembra funzionare" e "funziona" sono due cose diverse.</p></div><div lang="en"><p>The method gets copied anyway; the experience does not. None of the three depends on Claude Code: a table of sources, a promotion rule, and proof that automatic systems do what they seem to. The corrupted frontmatter threw no errors and the restore left half the files out: "looks like it works" and "it works" are two different things.</p></div></aside>
+</section>
+<section id="link" class="g-end">
+<p class="eyebrow mono"><span class="no">22</span> · <span lang="it">Link</span><span lang="en">Links</span></p>
+<h2><span lang="it">Repo, versione inglese, contatti</span><span lang="en">Repo, English version, contacts</span></h2>
+<div class="body"><div class="cols2 linkcols">
+  <ul class="list links">
+    <li><span class="small mono"><span lang="it">repo</span><span lang="en">repo</span></span><a href="https://github.com/thomascasali/claude-kb-workflow" target="_blank" rel="noopener">github.com/thomascasali/claude-kb-workflow</a></li>
+    <li><span class="small mono"><span lang="it">versione inglese</span><span lang="en">English version</span></span><a href="https://thomascasali.github.io/presentazione-kb-workflow/?lang=en" target="_blank" rel="noopener">thomascasali.github.io/presentazione-kb-workflow/?lang=en</a></li>
+    <li><span class="small mono">GitHub</span><a href="https://github.com/thomascasali" target="_blank" rel="noopener">github.com/thomascasali</a></li>
+    <li><span class="small mono">LinkedIn</span><a href="https://www.linkedin.com/in/thomascasali/" target="_blank" rel="noopener">linkedin.com/in/thomascasali</a></li>
+  </ul>
+  <figure class="qr"><img src="assets/qr-repo.png" alt="QR code claude-kb-workflow" width="220" height="220"><figcaption class="small"><span lang="it">QR del repo</span><span lang="en">Repo QR code</span></figcaption></figure>
+</div></div>
+<aside class="notes"><div lang="it"><p>Le domande e le correzioni benvenute vanno nelle Discussion o nelle Issue del repo. Licenza MIT. Il link alla versione inglese punta alla presentazione attuale; la nuova avrà lo stesso indirizzo con ?lang=en dopo la pubblicazione.</p></div><div lang="en"><p>Questions and corrections are welcome in the repo's Discussions or Issues. MIT license. The English link points to the current presentation; the new one will use the same address with ?lang=en once published.</p></div></aside>
+</section>
+<section id="a-claude-md" class="g-app">
+<p class="eyebrow mono"><span class="no">23</span> · <span lang="it">Appendice · CLAUDE.md</span><span lang="en">Appendix · CLAUDE.md</span></p>
+<h2><span lang="it">Una politica per il CLAUDE.md</span><span lang="en">A policy for CLAUDE.md</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small">docs/orchestrazione.md · docs/orchestration.md</p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="1-2,6,8">## Flusso di orchestrazione (vale per ogni lavoro non banale)
+Tu sei il lead: pianifica, decomponi, delega ai subagent — non eseguire
+tu il lavoro — e sintetizza. Mostra prima il piano, poi esegui.
+- Incarichi piccoli, chiusi, provabili -&gt; quick-worker (default)
+- Causa sconosciuta, scelta vera, modifiche ampie -&gt; fast-worker
+- Design, piani, secondo parere -&gt; deep-reasoner
+- Se un livello fallisce, rilancia quello sopra con il lavoro già fatto allegato.
+- Per il resto scegli lo specialista dalla description del pool.
+- Gate obbligatorio: prima di dichiarare finito, passa da `reviewer`.
+- Eccezione: task banali/conversazionali in prima persona, senza cerimonia.</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="1-2,6,8">## Orchestration flow (applies to all non-trivial work)
+You are the lead: plan, decompose, delegate to subagents — don&#x27;t do
+the work yourself — and synthesize. Show the plan first, then execute.
+- Small, closed, testable jobs -&gt; quick-worker (default)
+- Unknown cause, real choice, wide changes -&gt; fast-worker
+- Design, plans, second opinion -&gt; deep-reasoner
+- Relaunch one tier up, with the previous work attached, when a tier fails.
+- For everything else, pick the specialist from the pool&#x27;s description.
+- Mandatory gate: before declaring done, pass through `reviewer`.
+- Exception: trivial/conversational tasks done directly, no ceremony.</code></pre>
+</div></div>
+<aside class="notes"><div lang="it"><p>Estratto dal documento di orchestrazione: è l'esempio di politica che il documento propone di adattare. Evidenziati il ruolo del lead e il gate. Nel CLAUDE.md va la politica di instradamento, non l'elenco degli agenti.</p></div><div lang="en"><p>Excerpt from the orchestration doc: the example policy it suggests adapting. The lead's role and the gate are highlighted. CLAUDE.md should hold the routing policy, not a list of agents.</p></div></aside>
+</section>
+<section id="a-agente" class="g-app">
+<p class="eyebrow mono"><span class="no">24</span> · <span lang="it">Appendice · un agente</span><span lang="en">Appendix · an agent</span></p>
+<h2><span lang="it">agents/quick-worker.md</span><span lang="en">agents/quick-worker.md</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small">agents/quick-worker.md<span lang="it"></span><span lang="en"> · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-yaml" data-trim data-line-numbers="2-4,9-10">---
+name: quick-worker
+description: Default per incarichi piccoli e chiusi, verificabili con un test o un comando - raccolta di stato locale, riassunti, log locali o già scaricati, domande delimitate, modifiche meccaniche, output in serie, piani già scritti, review di primo passaggio. Mai su server di produzione, file con segreti o gate finale.
+model: haiku
+---
+
+[...]
+
+- Se non riesci a completare o la verifica fallisce, dillo chiaramente,
+  con cosa hai fatto e dove ti sei fermato.</code></pre>
+<pre lang="en"><code class="language-yaml" data-trim data-line-numbers="2-4,9-10">---
+name: quick-worker
+description: Default for small, closed jobs a test or a command can prove - collecting local state, summaries, local or already-downloaded logs, bounded questions, mechanical edits, serial output, plans already written, first-pass review. Never on production servers, files with secrets or the final gate.
+model: haiku
+---
+
+[...]
+
+- If you cannot finish or the check fails, say so plainly,
+  with what you did and where you stopped.</code></pre>
+</div></div>
+<aside class="notes"><div lang="it"><p>L'intero file dell'agente di livello Haiku. Il frontmatter (name, description, model) è ciò che il lead vede: la description è l'unico criterio di selezione. Se il frontmatter non si legge, l'agente non esiste.</p></div><div lang="en"><p>The whole file of the Haiku-tier agent. The frontmatter (name, description, model) is what the lead sees: the description is the only selection criterion. If the frontmatter does not parse, the agent does not exist.</p></div></aside>
+</section>
+<section id="a-wiki" class="g-app">
+<p class="eyebrow mono"><span class="no">25</span> · <span lang="it">Appendice · pagina wiki</span><span lang="en">Appendix · wiki page</span></p>
+<h2><span lang="it">Intestazione, nota di promozione, riga di log</span><span lang="en">Header, promotion note, log line</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small">llm-wiki-template/schema.md · commands/kb-promote.md<span lang="it"></span><span lang="en"> · translated excerpt, the original is in Italian</span></p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="2-4,8,10"># Titolo
+**Aggiornato**: YYYY-MM-DD
+**Sorgenti**: raw/sessions/YYYY-MM-DD-*.md, ...
+**Tags**: #progetto, #concetto
+
+[...]
+
+&gt; **Promosso** a `KB/[destinazione]` il YYYY-MM-DD
+
+| YYYY-MM-DD | PROMOTE | [concetto] | Promosso a KB/[destinazione] |</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="2-4,8,10"># Title
+**Updated**: YYYY-MM-DD
+**Sources**: raw/sessions/YYYY-MM-DD-*.md, ...
+**Tags**: #project, #concept
+
+[...]
+
+&gt; **Promoted** to `KB/[destination]` on YYYY-MM-DD
+
+| YYYY-MM-DD | PROMOTE | [concept] | Promoted to KB/[destination] |</code></pre>
+</div></div>
+<aside class="notes"><div lang="it"><p>Tre frammenti messi in fila: l'intestazione obbligatoria di ogni pagina (schema.md), la nota che /kb-promote lascia nel concetto, e la riga che appende a wiki/log.md. La wiki è append-mostly: le decisioni superate si segnano come superseded, non si cancellano.</p></div><div lang="en"><p>Three fragments in a row: the mandatory header of every page (schema.md), the note /kb-promote leaves in the concept, and the line it appends to wiki/log.md. The wiki is append-mostly: superseded decisions are marked as such, not deleted.</p></div></aside>
+</section>
+<section id="a-review-log" class="g-app">
+<p class="eyebrow mono"><span class="no">26</span> · <span lang="it">Appendice · review log</span><span lang="en">Appendix · review log</span></p>
+<h2><span lang="it">La sezione Review log</span><span lang="en">The Review log section</span></h2>
+<div class="body"><div class="excerpt">
+<p class="src mono small">docs/review-log-incrementale.md · docs/incremental-review-log.md</p>
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="5-6">## Review log
+
+| Data | SHA | Esito | Finding aperti |
+|---|---|---|---|
+| 2026-09-02 | a1b2c3d | review completa, 3 fix applicati | nessuno |
+| 2026-09-20 | e4f5a6b | diff a1b2c3d..e4f5a6b, approvato | rate limit su /export da decidere |</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="5-6">## Review log
+
+| Date | SHA | Outcome | Open findings |
+|---|---|---|---|
+| 2026-09-02 | a1b2c3d | full review, 3 fixes applied | none |
+| 2026-09-20 | e4f5a6b | diff a1b2c3d..e4f5a6b, approved | rate limit on /export not yet decided |</code></pre>
+</div></div>
+<aside class="notes"><div lang="it"><p>Esempio del documento, nella sezione "Review log" di project-memories/&lt;progetto&gt;.md. La seconda riga mostra il caso tipico: si rivede solo il diff dall'ultimo SHA e un finding resta aperto.</p></div><div lang="en"><p>Example from the doc, in the "Review log" section of project-memories/&lt;project&gt;.md. The second row shows the typical case: only the diff since the last SHA is reviewed and one finding stays open.</p></div></aside>
+</section>
+</div>
+</div>
+<noscript>Serve JavaScript per le slide. This deck needs JavaScript.</noscript>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/highlight.min.js"></script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var isPrint = /print-pdf/.test(location.search);
+  var mqPortrait = window.matchMedia('(orientation: portrait) and (max-width: 820px)');
+
+  // lingua: it di default, ?lang=en per l'inglese
+  var qs = new URLSearchParams(location.search);
+  var lang = qs.get('lang') === 'en' ? 'en' : 'it';
+
+  // note del relatore: una copia per lingua, la scheda attiva viene riscritta
+  var asides = Array.prototype.slice.call(document.querySelectorAll('aside.notes'));
+  var notesBy = asides.map(function (a) {
+    var it = a.querySelector('[lang="it"]'), en = a.querySelector('[lang="en"]');
+    return { it: it ? it.innerHTML : '', en: en ? en.innerHTML : '' };
+  });
+  function applyNotes() { asides.forEach(function (a, i) { a.innerHTML = notesBy[i][lang]; }); }
+
+  function applyLang(l, push) {
+    lang = l;
+    root.setAttribute('lang', l);
+    document.title = l === 'en' ? 'Knowledge that carries across projects' : 'Conoscenza che attraversa i progetti';
+    document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-set-lang') === l));
+    });
+    applyNotes();
+    if (push) {
+      var u = new URL(location.href);
+      if (l === 'en') u.searchParams.set('lang', 'en'); else u.searchParams.delete('lang');
+      history.replaceState(null, '', u.pathname + u.search + u.hash);
+    }
+  }
+  applyLang(lang, false);
+  document.querySelectorAll('.lang button').forEach(function (b) {
+    b.addEventListener('click', function () { applyLang(b.getAttribute('data-set-lang'), true); });
+    b.addEventListener('keydown', function (e) { e.stopPropagation(); });
+  });
+
+  function size() {
+    if (isPrint || !mqPortrait.matches) return { w: 1280, h: 720, p: false };
+    return { w: 480, h: 900, p: true };
+  }
+  var s0 = size();
+  root.classList.toggle('portrait', s0.p);
+
+  Reveal.initialize({
+    width: s0.w, height: s0.h, margin: 0.02, minScale: 0.2, maxScale: 2.5,
+    center: false, display: 'flex', scrollActivationWidth: null,
+    hash: true, history: false,
+    controls: true, controlsTutorial: false, controlsLayout: 'bottom-right',
+    progress: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    overview: true, touch: true, keyboard: true, navigationMode: 'linear',
+    transition: 'fade', transitionSpeed: 'fast', backgroundTransition: 'none',
+    fragments: true, help: true, pdfSeparateFragments: false, pdfMaxPagesPerSlide: 1,
+    plugins: [RevealNotes, RevealHighlight]
+  });
+
+  function relayout() {
+    var s = size();
+    root.classList.toggle('portrait', s.p);
+    Reveal.configure({ width: s.w, height: s.h });
+    Reveal.layout();
+  }
+  window.addEventListener('resize', relayout);
+  window.addEventListener('orientationchange', function () { setTimeout(relayout, 150); });
+
+  Reveal.addKeyBinding({ keyCode: 76, key: 'L', description: 'Lingua IT/EN · Language' }, function () {
+    applyLang(lang === 'it' ? 'en' : 'it', true);
+  });
+})();
+</script>
+</body>
+</html>

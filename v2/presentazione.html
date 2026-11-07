@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conoscenza che attraversa i progetti</title>
 <meta name="description" content="Come funziona claude-kb-workflow: dalle sessioni di Claude Code a una wiki, poi a una KB stabile.">
+<link rel="icon" type="image/svg+xml" href="assets/memoteca-mark.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,13 +18,19 @@
 <section id="titolo" class="g-end title">
 
 <div class="title-wrap">
-  <p class="eyebrow mono">claude-kb-workflow · toolkit v0.4.1</p>
+  <div class="mt-cover"><svg viewBox="0 0 333 64" role="img" aria-label="Memoteca" class="mt-logo" focusable="false">
+<path fill="#f0c169" d="M6.00 22.00 L6.00 8.00 L18.00 8.00 L26.17 22.00 L37.83 22.00 L46.00 8.00 L58.00 8.00 L58.00 22.00Z"/>
+<path fill="#7fcbb3" d="M6.00 39.00 L6.00 25.00 L27.92 25.00 L32.00 32.00 L36.08 25.00 L58.00 25.00 L58.00 39.00 L46.00 39.00 L46.00 28.00 L39.59 39.00 L24.41 39.00 L18.00 28.00 L18.00 39.00Z"/>
+<path fill="#e88f6c" d="M6.00 56.00 L6.00 42.00 L58.00 42.00 L58.00 56.00 L46.00 56.00 L46.00 42.00 L37.84 42.00 L33.17 50.00 L30.83 50.00 L26.16 42.00 L18.00 42.00 L18.00 56.00Z"/>
+<text fill="#f4eee3" style="font:600 50px Fraunces,Georgia,serif;letter-spacing:-.5px" x="82" y="46">memoteca</text>
+</svg></div>
   <h1><span lang="it">Conoscenza che attraversa i progetti</span><span lang="en">Knowledge that carries across projects</span></h1>
+  <p class="mono mt-sub">toolkit v0.4.1 · github.com/thomascasali/claude-kb-workflow</p>
   <p class="lead"><span lang="it">Come una sessione di lavoro con Claude Code lascia qualcosa di utile ai progetti successivi.</span><span lang="en">How one working session with Claude Code leaves something useful for the next projects.</span></p>
   <p class="byline mono">Thomas Casali</p>
   <p class="keys mono"><span lang="it">frecce o spazio: avanti · Esc: panoramica · S: note · L: lingua · I: indice · ?: tutti i tasti</span><span lang="en">arrows or space: next · Esc: overview · S: notes · L: language · I: index · ?: all keys</span></p>
 </div>
-<aside class="notes"><div lang="it"><p>Per chi lavora con assistenti AI su più progetti, dal vivo o leggendo online. Ogni slide si regge da sola; qui nelle note ci sono i dettagli e gli esempi.</p><p>I fatti vengono dal toolkit pubblico alla versione 0.4.1 (CHANGELOG del 5 novembre 2026): README, docs, comandi, agenti, skill.</p><p>Link diretto a ogni slide: l'indirizzo cambia a ogni passaggio. Export PDF: aggiungere ?print-pdf all'indirizzo.</p></div><div lang="en"><p>For people who use AI assistants across several projects, live or reading online. Each slide stands on its own; the notes hold the details and examples.</p><p>The facts come from the public toolkit at version 0.4.1 (CHANGELOG, 5 November 2026): README, docs, commands, agents, skills.</p><p>Every slide has its own link: the address changes as you move. PDF export: add ?print-pdf to the address.</p></div></aside>
+<aside class="notes"><div lang="it"><p>Il toolkit si chiama Memoteca (claude-kb-workflow è il nome del repository).</p><p>Per chi lavora con assistenti AI su più progetti, dal vivo o leggendo online. Ogni slide si regge da sola; qui nelle note ci sono i dettagli e gli esempi.</p><p>I fatti vengono dal toolkit pubblico alla versione 0.4.1 (CHANGELOG del 5 novembre 2026): README, docs, comandi, agenti, skill.</p><p>Link diretto a ogni slide: l'indirizzo cambia a ogni passaggio. Export PDF: aggiungere ?print-pdf all'indirizzo.</p></div><div lang="en"><p>The toolkit is called Memoteca (claude-kb-workflow is the repository name).</p><p>For people who use AI assistants across several projects, live or reading online. Each slide stands on its own; the notes hold the details and examples.</p><p>The facts come from the public toolkit at version 0.4.1 (CHANGELOG, 5 November 2026): README, docs, commands, agents, skills.</p><p>Every slide has its own link: the address changes as you move. PDF export: add ?print-pdf to the address.</p></div></aside>
 </section>
 <section id="problema" class="g-problem">
 <p class="eyebrow mono"><span class="no">01</span> · <span lang="it">Il problema</span><span lang="en">The problem</span></p>
@@ -282,7 +289,12 @@ cd claude-kb-workflow
 <aside class="notes"><div lang="it"><p>Il metodo si copia comunque; l'esperienza no. Le tre idee non dipendono da Claude Code: una tabella delle fonti, una regola di promozione, e la prova che i sistemi automatici fanno quello che pare. Il frontmatter rovinato non dava errori e il ripristino lasciava metà dei file: "sembra funzionare" e "funziona" sono due cose diverse.</p></div><div lang="en"><p>The method gets copied anyway; the experience does not. None of the three depends on Claude Code: a table of sources, a promotion rule, and proof that automatic systems do what they seem to. The corrupted frontmatter threw no errors and the restore left half the files out: "looks like it works" and "it works" are two different things.</p></div></aside>
 </section>
 <section id="link" class="g-end">
-<p class="eyebrow mono"><span class="no">23</span> · <span lang="it">Link</span><span lang="en">Links</span></p>
+<p class="eyebrow mono"><span class="no">23</span> · <span lang="it">Link</span><span lang="en">Links</span><span class="mt-end"><svg viewBox="0 0 333 64" role="img" aria-label="Memoteca" class="mt-logo sm" focusable="false">
+<path fill="#f0c169" d="M6.00 22.00 L6.00 8.00 L18.00 8.00 L26.17 22.00 L37.83 22.00 L46.00 8.00 L58.00 8.00 L58.00 22.00Z"/>
+<path fill="#7fcbb3" d="M6.00 39.00 L6.00 25.00 L27.92 25.00 L32.00 32.00 L36.08 25.00 L58.00 25.00 L58.00 39.00 L46.00 39.00 L46.00 28.00 L39.59 39.00 L24.41 39.00 L18.00 28.00 L18.00 39.00Z"/>
+<path fill="#e88f6c" d="M6.00 56.00 L6.00 42.00 L58.00 42.00 L58.00 56.00 L46.00 56.00 L46.00 42.00 L37.84 42.00 L33.17 50.00 L30.83 50.00 L26.16 42.00 L18.00 42.00 L18.00 56.00Z"/>
+<text fill="#f4eee3" style="font:600 50px Fraunces,Georgia,serif;letter-spacing:-.5px" x="82" y="46">memoteca</text>
+</svg></span></p>
 <h2><span lang="it">Repo, versione inglese, contatti</span><span lang="en">Repo, English version, contacts</span></h2>
 <div class="body"><div class="cols2 linkcols">
   <ul class="list links">

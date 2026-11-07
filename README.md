@@ -12,6 +12,8 @@ Ora è bilingue italiano/inglese: un selettore di lingua in apertura sull'indice
 
 ## Contenuti di v2 (in prova)
 
+Il toolkit si chiama Memoteca (il repository resta `claude-kb-workflow`): logo e favicon in `v2/assets/memoteca-*.svg`, inline in versione scura nelle pagine.
+
 Tre voci raggiungibili dall'indice `v2/index.html`. Lingua italiana di default, `?lang=en` per l'inglese; `I` torna all'indice, `L` cambia lingua, `Esc` apre la panoramica, `S` le note del relatore.
 
 | Voce | File | Contenuto | Slide |

@@ -1,8 +1,8 @@
 # Conoscenza che attraversa i progetti — come ho costruito un sistema di conoscenza per Claude Code
 
-Presentation available in English: https://thomascasali.github.io/presentazione-kb-workflow/?lang=en
+Presentation available in English: https://thomascasali.github.io/presentazione-memoteca/?lang=en
 
-▶️ **Vedi la presentazione**: https://thomascasali.github.io/presentazione-kb-workflow/
+▶️ **Vedi la presentazione**: https://thomascasali.github.io/presentazione-memoteca/
 
 La versione precedente (cinque atti in React) resta online in [`v1/`](v1/index.html). I vecchi indirizzi (`atto1-il-problema.html` e simili) rimandano alle pagine nuove.
 

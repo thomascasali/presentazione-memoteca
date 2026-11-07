@@ -89,4 +89,4 @@ Conteggio slide: Atto 1 = 6, Atto 2 = 6, Atto 3 = 10, Atto 4 = 7, Atto 5 = 6, Ap
 - Il repo `https://github.com/thomascasali/claude-kb-workflow` diventa pubblico l'18 agosto 2026: fino ad allora il link nella slide finale va mantenuto con l'etichetta "pubblico dal 18/08/2026"
 
 ## Link GitHub Pages
-https://thomascasali.github.io/presentazione-kb-workflow/
+https://thomascasali.github.io/presentazione-memoteca/

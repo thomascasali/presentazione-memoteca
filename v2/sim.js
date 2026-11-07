@@ -132,8 +132,11 @@
         el.term.appendChild(p);
       });
     }
-    var top = function () { return el.term.getBoundingClientRect().top + parseFloat(getComputedStyle(el.term).paddingTop || 0) - 1; };
-    while (el.term.children.length > 1 && el.term.firstChild.getBoundingClientRect().top < top()) {
+    // unita coerenti: il padding va scalato come le misure di getBoundingClientRect
+    var rect = el.term.getBoundingClientRect();
+    var k = el.term.offsetHeight ? rect.height / el.term.offsetHeight : 1;
+    var limit = rect.top + parseFloat(getComputedStyle(el.term).paddingTop || 0) * k - 1;
+    while (el.term.children.length > 1 && el.term.firstChild.getBoundingClientRect().top < limit) {
       el.term.removeChild(el.term.firstChild);
     }
     el.actors.innerHTML = '';
@@ -188,6 +191,7 @@
     bind(51, '3', 'Scenario 3', function () { pick(2); });
     bind(82, 'R', 'Simulatore: ricomincia · restart', restart);
     Reveal.on('slidechanged', function () { if (isActive()) render(); });
+    Reveal.on('overviewhidden', function () { if (isActive()) render(); });
     render();
   };
 })();

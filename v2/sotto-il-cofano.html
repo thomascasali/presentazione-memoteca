@@ -33,7 +33,7 @@
 <h2><span lang="it">Cosa succede quando apri una sessione</span><span lang="en">What happens when you open a session</span></h2>
 <div class="body"><div class="boot"><div class="b" style="--acc:var(--blue)"><span class="n">1</span><div><strong><span lang="it">CLAUDE.md globale</span><span lang="en">Global CLAUDE.md</span></strong><span class="d"><span lang="it">vale per tutti i progetti</span><span lang="en">applies to every project</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--blue)"><span class="n">2</span><div><strong><span lang="it">CLAUDE.md di progetto</span><span lang="en">Project CLAUDE.md</span></strong><span class="d"><span lang="it">se esiste</span><span lang="en">if it exists</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--blue)"><span class="n">3</span><div><strong><span lang="it">Memoria automatica</span><span lang="en">Auto memory</span></strong><span class="d"><span lang="it">quella del progetto corrente</span><span lang="en">the current project's</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--blue)"><span class="n">4</span><div><strong><span lang="it">Agenti e skill</span><span lang="en">Agents and skills</span></strong><span class="d"><span lang="it">frontmatter valido da agents/*.md, skill indicizzate per description</span><span lang="en">valid frontmatter from agents/*.md, skills indexed by description</span></span></div></div><div class="arr">↓</div><div class="b" style="--acc:var(--gold)"><span class="n">5</span><div><strong><span lang="it">Il tuo primo messaggio</span><span lang="en">Your first message</span></strong><span class="d"><span lang="it">solo adesso</span><span lang="en">only now</span></span></div></div></div>
 <p class="callout sm"><span lang="it">Tutto questo avviene prima del tuo primo prompt, a ogni sessione.</span><span lang="en">All of this happens before your first prompt, in every session.</span></p></div>
-<aside class="notes"><div lang="it"><p>Il CLAUDE.md è l'unico file caricato sempre: per questo resta corto e fa da indice, con puntatori alla conoscenza invece del contenuto. Se il contenuto stesse lì dentro, ogni sessione pagherebbe il costo di leggerlo tutto. Premere avanti per vedere lo schema del file.</p></div><div lang="en"><p>CLAUDE.md is the only file that is always loaded: that is why it stays short and works as an index, with pointers to the knowledge instead of the content. If the content lived there, every session would pay to read all of it. Press forward to see the file outline.</p></div></aside>
+<aside class="notes"><div lang="it"><p>Il CLAUDE.md viene caricato a ogni sessione: per questo resta corto e fa da indice, con puntatori alla conoscenza invece del contenuto. Se il contenuto stesse lì dentro, ogni sessione pagherebbe il costo di leggerlo tutto. Premere avanti per vedere lo schema del file.</p></div><div lang="en"><p>CLAUDE.md is loaded in every session: that is why it stays short and works as an index, with pointers to the knowledge instead of the content. If the content lived there, every session would pay to read all of it. Press forward to see the file outline.</p></div></aside>
 </section>
 <section id="bootstrap-schema" class="g-agents">
 <p class="eyebrow mono"><span class="no">01</span> · <span lang="it">Il bootstrap</span><span lang="en">The bootstrap</span></p>
@@ -59,7 +59,7 @@
 <p class="eyebrow mono"><span class="no">02</span> · <span lang="it">CLAUDE.md globale</span><span lang="en">Global CLAUDE.md</span></p>
 <h2><span lang="it">Dentro il CLAUDE.md globale</span><span lang="en">Inside the global CLAUDE.md</span></h2>
 <div class="body"><div class="excerpts"><div class="excerpt">
-<p class="src mono small"><span lang="it">~/.claude/CLAUDE.md · esempio semplificato e tradotto</span><span lang="en">~/.claude/CLAUDE.md · simplified example</span></p>
+<p class="src mono small"><span lang="it">~/.claude/CLAUDE.md · esempio semplificato</span><span lang="en">~/.claude/CLAUDE.md · simplified example</span></p>
 <pre lang="it"><code class="language-markdown" data-trim data-line-numbers="4-5,9,12">## Basi di conoscenza
 - KB stabile: &lt;percorso&gt;/knowledge-base/
 - LLM Wiki: &lt;percorso&gt;/llm-wiki/wiki/index.md
@@ -193,8 +193,8 @@ description: Prima di dichiarare una task completata, [...] NON da usare per tas
 [...]
 ## La regola
 Niente claim di completamento senza evidenza fresca dell&#x27;esecuzione.
-1. **Identifica** il comando che prova la claim
-2. **Esegui** il comando completo
+1. **Identifica** il comando che prova la claim [...]
+2. **Esegui** il comando completo [...]
 3. **Leggi** l&#x27;output integrale e l&#x27;exit code
 4. **Conferma** che l&#x27;output corrisponda alla claim
 5. **Solo allora** comunica il successo</code></pre>
@@ -205,8 +205,8 @@ description: Before declaring a task complete, [...] NOT for pure exploration/re
 [...]
 ## The rule
 No completion claims without fresh evidence of execution.
-1. **Identify** the command that proves the claim
-2. **Run** the full command
+1. **Identify** the command that proves the claim [...]
+2. **Run** the full command [...]
 3. **Read** the full output and the exit code
 4. **Confirm** that the output matches the claim
 5. **Only then** report success</code></pre>
@@ -224,9 +224,9 @@ No completion claims without fresh evidence of execution.
 ├── wiki/
 │   ├── index.md           # Indice globale (una riga per pagina)
 │   ├── log.md             # Append-only: ogni operazione ingest/lint/promote
-│   ├── projects/
+│   ├── projects/          # [...]
 │   ├── concepts/          # Concetti tecnici emersi dalle sessioni
-│   ├── decisions/
+│   ├── decisions/         # [...]
 │   └── lessons/           # Lezioni apprese da bug, deploy, errori
 └── raw/
     ├── sessions/          # Dump di sessioni Claude significative
@@ -235,9 +235,9 @@ No completion claims without fresh evidence of execution.
 ├── wiki/
 │   ├── index.md           # Global index (one line per page)
 │   ├── log.md             # Append-only: every ingest/lint/promote operation
-│   ├── projects/
+│   ├── projects/          # [...]
 │   ├── concepts/          # Technical concepts that emerged from sessions
-│   ├── decisions/
+│   ├── decisions/         # [...]
 │   └── lessons/           # Lessons learned from bugs, deploys, mistakes
 └── raw/
     ├── sessions/          # Dumps of significant Claude sessions
@@ -256,12 +256,14 @@ No completion claims without fresh evidence of execution.
 **Sorgenti**: raw/sessions/YYYY-MM-DD-*.md, ...
 **Tags**: #progetto, #concetto
 
+[...]
 - **Link interni** (wiki → wiki): `[[nome-pagina]]` oppure `[[nome-pagina|Testo alias]]`</code></pre>
 <pre lang="en"><code class="language-markdown" data-trim data-line-numbers="2-4"># Title
 **Updated**: YYYY-MM-DD
 **Sources**: raw/sessions/YYYY-MM-DD-*.md, ...
 **Tags**: #project, #concept
 
+[...]
 - **Internal links** (wiki → wiki): `[[page-name]]` or `[[page-name|Alias text]]`</code></pre>
 </div>
 <ul class="caps cc"><li><span lang="it">Tre campi obbligatori: quando è stata aggiornata, da quali sorgenti, con quali etichette.</span><span lang="en">Three mandatory fields: when it was updated, from which sources, with which tags.</span></li><li><span lang="it">I link [[...]] usano la sintassi Obsidian e disegnano il grafo della wiki.</span><span lang="en">[[...]] links use Obsidian's syntax and draw the wiki's graph.</span></li></ul></div>
@@ -273,7 +275,7 @@ No completion claims without fresh evidence of execution.
 <p class="eyebrow mono"><span class="no">08</span> · <span lang="it">La KB stabile</span><span lang="en">The stable KB</span></p>
 <h2><span lang="it">Cosa contiene</span><span lang="en">What it holds</span></h2>
 <div class="body"><div class="excerpt">
-<p class="src mono small"><span lang="it">README.md · estratto tradotto</span><span lang="en">README.md</span></p>
+<p class="src mono small"><span lang="it">README.md · estratto, originale in inglese</span><span lang="en">README.md</span></p>
 <pre lang="it"><code class="language-plaintext" data-trim data-line-numbers="2-4">claude-kb-workflow/
 ├── agents/              # 13 subagent con frontmatter
 ├── patterns/            # pattern + note di campo personali
@@ -299,7 +301,7 @@ No completion claims without fresh evidence of execution.
 <h2><span lang="it">Si entra solo per promozione</span><span lang="en">You get in only by promotion</span></h2>
 <div class="body"><div class="excerpt">
 <p class="src mono small"><span lang="it">commands/kb-promote.md</span><span lang="en">commands/kb-promote.md · translated excerpt, the original is in Italian</span></p>
-<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="1,3-5,9">Deve valere ALMENO UNA di queste:
+<pre lang="it"><code class="language-markdown" data-trim data-line-numbers="1,3-5,9-10">Deve valere ALMENO UNA di queste:
 
 - [ ] È usato da almeno 2 progetti
 - [ ] È un gotcha già pagato, che costerebbe almeno un&#x27;ora a chi lo reincontra
@@ -307,8 +309,9 @@ No completion claims without fresh evidence of execution.
 
 E sempre:
 
-- [ ] Verificato in produzione o su device reale (non solo teorico)</code></pre>
-<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="1,3-5,9">At least ONE of these must hold:
+- [ ] Verificato in produzione o su device reale (non solo teorico)
+- [ ] Non già presente in `$KB_PATH/patterns/patterns.md` o `$KB_PATH/patterns/field-notes-it.md`</code></pre>
+<pre lang="en"><code class="language-markdown" data-trim data-line-numbers="1,3-5,9-10">At least ONE of these must hold:
 
 - [ ] It is used by at least 2 projects
 - [ ] It is a gotcha already paid for, that would cost an hour or more to hit again
@@ -316,7 +319,8 @@ E sempre:
 
 And in every case:
 
-- [ ] Verified in production or on a real device (not only theoretical)</code></pre>
+- [ ] Verified in production or on a real device (not only theoretical)
+- [ ] Not already in `$KB_PATH/patterns/patterns.md` or `$KB_PATH/patterns/field-notes-it.md`</code></pre>
 </div></div>
 <aside class="notes"><div lang="it"><p>L'esame di /kb-promote: basta una delle tre ragioni, ma la verifica in produzione o su un dispositivo reale è sempre richiesta.</p></div><div lang="en"><p>The /kb-promote exam: one of the three reasons is enough, but verification in production or on a real device is always required.</p></div></aside>
 </section>

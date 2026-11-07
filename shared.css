@@ -309,6 +309,7 @@ html.portrait .boot .b{padding:5px 10px}
 .tl.lead{color:var(--blue)} .tl.kb{color:var(--teal)} .tl.agent,.tl.command{color:var(--gold)}
 .tl.agent2{color:var(--purple)} .tl.skill{color:var(--green)} .tl.reviewer{color:var(--terra)} .tl.success{color:var(--green)}
 .tl.agentresp{color:var(--dim)}
+.tl.warn{color:var(--red)}
 .tl.new{background:rgba(240,193,105,.10);border-radius:4px}
 .panel{display:flex;flex-direction:column;gap:6px;min-height:0}
 .actors{display:flex;flex-direction:column;gap:5px}
@@ -416,3 +417,35 @@ html.portrait .hljs-ln-code{padding-left:10px!important;padding-right:10px!impor
 html.portrait .home-logo{width:28px;height:28px;top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px))}
 .xlinks a.next{border-color:var(--gold);color:var(--gold);font-weight:600}
 .xlinks a.next::after{content:" →"}
+
+/* simulatore: selettore a due livelli (parte, scenario) */
+.sim-sel{display:flex;flex-direction:column;gap:6px}
+.sim-groups,.sim-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.btn.sm{font-size:17px;min-height:38px;padding:3px 14px}
+.btn .num{font:600 .85em 'IBM Plex Mono',monospace;color:var(--gold);margin-right:4px}
+.sim-groups .btn{min-height:34px}
+html.portrait .sim-sel{gap:4px}
+html.portrait .sim-groups,html.portrait .sim-tabs{gap:6px;flex-wrap:nowrap}
+html.portrait .sim-grp,html.portrait .sim-tab{flex:1 1 0;min-width:0;font-size:14px;line-height:1.15;padding:3px 6px;min-height:36px}
+html.portrait .sim-grp .num{display:block;margin:0}
+html.portrait .sim-tab .num{margin-right:3px}
+html.portrait .sim-keys{display:none}
+
+/* slide "cosa si ripete": tabella */
+.tbl.rep .trow{grid-template-columns:1fr 1fr 2fr;padding:8px 4px;font-size:22px;line-height:1.25}
+.tbl.rep .trow.thead{font-size:var(--fs-xs);line-height:1.2}
+.tbl.rep .tdo{color:var(--text)}
+.tbl.rep .cl{display:none}
+html.portrait .tbl.rep .trow{grid-template-columns:1fr;gap:2px;padding:7px 2px}
+html.portrait .tbl.rep .cl{display:inline;color:var(--muted)}
+html.portrait .tbl.rep .tdo,html.portrait .tbl.rep .tlim{font-size:17px;line-height:1.25}
+html.portrait .tbl.rep .tname{font-size:20px}
+.sim-keys{font-size:19px;white-space:nowrap;flex-wrap:nowrap}
+html.portrait .sim-keys{display:none}
+.sim .actor{font-size:21px;padding:3px 10px}
+html.portrait .sim .actor{font-size:15px;padding:3px 8px}
+#si-ripete .body{gap:10px}
+#si-ripete h2{margin-bottom:12px}
+.tbl.rep .trow{padding:5px 4px;font-size:21px;line-height:1.22}
+#si-ripete .callout.sm{font-size:var(--fs-xs)}
+#si-ripete .xlinks a{min-height:36px;padding:4px 12px}

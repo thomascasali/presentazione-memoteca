@@ -1,4 +1,4 @@
-/* Simulatore "una sessione vera": tre scenari illustrativi, JS vanilla. */
+/* Simulatore "una sessione vera": nove scenari illustrativi in tre parti, JS vanilla. */
 (function () {
   'use strict';
   var A = function (id, label, tier) { return { id: id, label: label, tier: tier || '' }; };
@@ -22,6 +22,34 @@
         moral: 'Il secondo progetto non ha ripagato quello che il primo aveva già pagato.'
       },
       {
+        tab: 'Sessione cloud', term: '~/mio-progetto, sessione cloud simulata',
+        actors: [A('claudemd', 'CLAUDE.md'), A('cloud', 'Sessione cloud'), A('kb', 'KB e wiki, sola lettura'), A('handoff', 'docs/kb-handoff/'), A('wiki', 'Wiki locale')],
+        steps: [
+          { l: [['prompt', 'Correggi gli arrotondamenti nei totali dei preventivi']], on: ['claudemd', 'cloud'], n: 'Una sessione cloud parte da un clone del repo: vede il progetto, non il tuo computer.' },
+          { l: [['lead', 'Lead: cerco in KB un pattern sugli importi arrotondati'], ['kb', 'KB: letta, nessun pattern. Da qui è in sola lettura']], on: ['kb'], n: 'La KB si legge anche dal cloud. Non si scrive.' },
+          { l: [['lead', 'Lead: causa trovata, si sommano importi già arrotondati. Arrotondo una volta sola, sul totale'], ['success', 'test sui preventivi: verdi']], on: ['cloud'], n: 'Il lavoro si fa e si prova come in locale.' },
+          { l: [['lead', 'Lead: la lezione vale anche per altri progetti, ma da qui non posso scriverla né in KB né in wiki']], on: ['kb', 'cloud'], n: 'Meglio dichiararlo che perderla.' },
+          { l: [['command', 'scrivo docs/kb-handoff/arrotondamenti.md'], ['success', 'nota nel repo: cosa è successo, come è stato provato, nessun segreto']], on: ['handoff'], n: 'La nota viaggia con il repo, nello stesso commit del fix.' },
+          { l: [['prompt', '(sul tuo computer) /kb-ingest lesson arrotondamenti, dal testo di docs/kb-handoff/arrotondamenti.md']], on: ['wiki'], n: '/kb-ingest non legge docs/kb-handoff/: la nota si porta in wiki a mano, come testo della lezione.' },
+          { l: [['success', 'wiki: sorgente salvata, pagina del progetto aggiornata, riga nel log'], ['lead', 'Lead: tolgo la nota da docs/kb-handoff/ e faccio il commit']], on: ['wiki', 'handoff'], n: 'La nota ha fatto da ponte, poi sparisce: la fonte resta la wiki.' }
+        ],
+        moral: 'Una sessione che non può scrivere in KB lascia una nota, non una lezione persa.'
+      },
+      {
+        tab: 'Promozione in KB', term: '~/llm-wiki, sessione simulata',
+        actors: [A('claudemd', 'CLAUDE.md'), A('wiki', 'Wiki: concepts/'), A('exam', '/kb-promote'), A('kb', 'KB stabile: patterns')],
+        steps: [
+          { l: [['prompt', '/kb-promote idempotenza-webhook']], on: ['exam'], n: 'La promozione è un esame, non un copia e incolla.' },
+          { l: [['lead', 'Lead: leggo wiki/concepts/idempotenza-webhook.md'], ['kb', 'wiki: visto in 2 progetti, verificato in produzione in entrambi']], on: ['wiki'], n: 'La wiki dice cosa è stato visto e dove.' },
+          { l: [['kb', '[x] usato da almeno 2 progetti'], ['kb', '[x] verificato in produzione'], ['kb', '[x] non già in patterns/patterns.md']], on: ['exam'], n: 'Basta una condizione tra tre (qui, i 2 progetti). In più: verificato in produzione e non già presente.' },
+          { l: [['success', 'promosso: nuova sezione in patterns/patterns.md'], ['command', 'nota «Promosso» nel concetto, riga PROMOTE in wiki/log.md, un commit per repo']], on: ['kb', 'wiki'], n: 'Wiki e KB cambiano insieme, e il log lo registra.' },
+          { l: [['prompt', '/kb-promote ordine-colonne-export']], on: ['exam'], n: 'Un secondo concetto, stesso esame.' },
+          { l: [['kb', '[ ] usato da almeno 2 progetti: no, uno solo'], ['kb', '[ ] gotcha da almeno un\'ora: no'], ['kb', '[ ] dichiarato standard: no']], on: ['exam', 'wiki'], n: 'Nessuna delle tre condizioni vale.' },
+          { l: [['lead', 'Lead: esame non superato, il concetto resta in wiki. Se lo rivedi in un altro progetto, si ripete']], on: ['wiki'], n: 'La KB resta piccola. La wiki può tenere ciò che è ancora una sola osservazione.' }
+        ],
+        moral: 'Una lezione entra in KB quando ha retto in più di un posto.'
+      },
+      {
         tab: 'Firma dei genitori', term: '~/portale-scuola, sessione simulata',
         actors: [A('claudemd', 'CLAUDE.md'), A('kb', 'KB stabile e wiki'), A('specialist', 'backend-dev', 'Sonnet'), A('skill', 'security', 'Opus'), A('reviewer', 'reviewer', 'Opus')],
         steps: [
@@ -38,6 +66,34 @@
         moral: 'I requisiti di sicurezza erano già scritti prima di aprire l\'editor.'
       },
       {
+        tab: 'Sale di livello', term: '~/mia-app, sessione simulata',
+        actors: [A('claudemd', 'CLAUDE.md'), A('quick', 'quick-worker', 'Haiku'), A('fast', 'fast-worker', 'Sonnet'), A('deep', 'deep-reasoner', 'Opus'), A('reviewer', 'reviewer', 'Opus')],
+        steps: [
+          { l: [['prompt', 'Porta i test di tutti i moduli al nuovo formato di configurazione']], on: ['claudemd'], n: 'Il lead parte dal livello più economico che basta.' },
+          { l: [['lead', 'Lead: il come è deciso e un comando lo prova. Parto da quick-worker'], ['agent', 'Lead → quick-worker: converti i test del modulo A e lancia la suite']], on: ['quick'], n: 'Modifica meccanica, provabile: Haiku.' },
+          { l: [['agentresp', 'quick-worker: 12 file convertiti, 3 test falliscono. Causa non trovata, mi fermo']], on: ['quick'], n: 'Haiku dice dove si è fermato invece di tirare a indovinare.' },
+          { l: [['lead', 'Lead: serve trovare una causa. Rilancio su fast-worker con il lavoro di Haiku allegato'], ['agent', 'Lead → fast-worker: i 12 file sono già convertiti, trova perché falliscono 3 test']], on: ['fast'], n: 'Si sale di un livello, senza rifare il lavoro già fatto.' },
+          { l: [['agentresp', 'fast-worker: gli helper condivisi ordinano i dati in modo diverso nel nuovo formato. Due strade: adattatore o riscrittura']], on: ['fast'], n: 'Sonnet trova la causa e incontra una scelta che pesa sui moduli futuri.' },
+          { l: [['agent', 'Lead → deep-reasoner: adattatore o riscrittura degli helper? Risposta in 10 righe'], ['agentresp', 'deep-reasoner: riscrittura. Adattatore solo per il modulo B, che dipende da un\'API esterna']], on: ['deep'], n: 'Una scelta di design va a Opus.' },
+          { l: [['agentresp', 'fast-worker: helper riscritti, test verdi in tutti i moduli'], ['reviewer', 'reviewer: eseguita la suite intera, non solo il modulo A. Approvato']], on: ['fast', 'reviewer'], n: 'Il gate chiude: un contesto pulito controlla prima del «fatto».' }
+        ],
+        moral: 'Si sale di livello solo per un motivo che si sa dire.'
+      },
+      {
+        tab: 'Rinomina su più repo', term: '~/progetti, sessione simulata',
+        actors: [A('claudemd', 'CLAUDE.md'), A('quick', 'quick-worker', 'Haiku'), A('reviewer', 'reviewer', 'Opus'), A('log', 'Review log, in KB')],
+        steps: [
+          { l: [['prompt', 'Rinomina il progetto da vecchio-nome a nuovo-nome: toolkit, slide e documentazione']], on: ['claudemd'], n: 'Tre repo, un nome da cambiare.' },
+          { l: [['lead', 'Lead: piano in tre parti. Toolkit, slide, documentazione: file diversi, nessuna dipendenza tra loro'], ['lead', 'Lead: vanno in parallelo, ognuno con un comando che prova il lavoro']], on: ['claudemd'], n: 'Il lead pianifica e delega. Il suo contesto resta libero.' },
+          { l: [['agent', 'Lead → quick-worker (toolkit): sostituisci il nome, poi grep deve dare zero'], ['agent', 'Lead → quick-worker (slide): sostituisci il nome nelle pagine, poi grep a zero'], ['agent', 'Lead → quick-worker (documentazione): sostituisci nome e link, poi grep a zero']], on: ['quick'], n: 'Tre agenti insieme, lavoro meccanico con prova: Haiku.' },
+          { l: [['agentresp', 'toolkit: 41 occorrenze, grep a zero'], ['agentresp', 'slide: 18 occorrenze, grep a zero'], ['agentresp', 'documentazione: 27 occorrenze e i link interni, grep a zero']], on: ['quick'], n: 'Ognuno riporta l\'esito del suo comando.' },
+          { l: [['lead', 'Lead: repo rinominato su GitHub. Provo un vecchio link: apre il nuovo indirizzo'], ['success', 'i vecchi link vengono reindirizzati']], on: ['claudemd'], n: 'GitHub reindirizza gli indirizzi del repo rinominato. I link fuori dal repo continuano a funzionare.' },
+          { l: [['reviewer', 'reviewer: ultimo SHA approvato nel review log: a1b2c3d. Rivedo solo git diff a1b2c3d..HEAD']], on: ['reviewer', 'log'], n: 'Review log incrementale: si guarda ciò che è cambiato dall\'ultimo SHA approvato, non l\'intero progetto.' },
+          { l: [['reviewer', 'reviewer: nessun riferimento rimasto al vecchio nome. Approvato'], ['success', 'review log aggiornato: nuovo SHA, esito, nessun finding aperto']], on: ['reviewer', 'log'], n: 'La voce nel log è il punto di partenza della prossima review.' }
+        ],
+        moral: 'Il lavoro si divide in parallelo, la review guarda solo il diff.'
+      },
+      {
         tab: 'Ordine non pagato', term: '~/negozio-online, sessione simulata',
         actors: [A('claudemd', 'CLAUDE.md'), A('kb', 'KB stabile e wiki'), A('skill', 'debugging-sistematico'), A('quick', 'quick-worker', 'Haiku'), A('specialist', 'backend-dev', 'Sonnet'), A('reviewer', 'reviewer', 'Opus')],
         steps: [
@@ -52,6 +108,34 @@
           { l: [['command', '/kb-ingest'], ['success', 'La sessione conferma il pattern 16 su un altro progetto']], on: ['kb'], n: 'Il pattern regge ancora, altrove.' }
         ],
         moral: 'Forzare l\'ordine a "pagato" a mano avrebbe nascosto il bug.'
+      },
+      {
+        tab: 'Il reviewer dice no', term: '~/toolkit, sessione simulata',
+        actors: [A('claudemd', 'CLAUDE.md'), A('fast', 'fast-worker', 'Sonnet'), A('reviewer', 'reviewer', 'Opus'), A('kb', 'KB stabile e wiki')],
+        steps: [
+          { l: [['prompt', 'Prima del rilascio, passa lo scanner anti-segreti su tutto il repo']], on: ['claudemd'], n: 'Un controllo di routine.' },
+          { l: [['agent', 'Lead → fast-worker: esegui lo scanner su tutto il repo'], ['agentresp', 'fast-worker: exit 0, nessun ritrovamento']], on: ['fast'], n: 'Il risultato sembra pulito.' },
+          { l: [['reviewer', 'reviewer: exit 0 non basta. Quali file ha letto lo scanner?'], ['reviewer', 'reviewer: salta i file con estensione .doc, anche quando sono testo. In un .doc di prova c\'è una chiave finta e non la vede']], on: ['reviewer'], n: 'Il reviewer controlla il metodo, non solo l\'esito. Questo era un falso pulito.' },
+          { l: [['reviewer', 'reviewer: non approvato']], on: ['reviewer'], n: 'Il gate può dire di no.' },
+          { l: [['agent', 'Lead → fast-worker: un file senza byte NUL va sempre letto, qualunque estensione. L\'elenco vale solo per i file che contengono NUL'], ['agentresp', 'fast-worker: corretto. Test aggiunto: un .doc di testo con una chiave finta ora viene segnalato']], on: ['fast'], n: 'La correzione arriva con un test che prima avrebbe fallito.' },
+          { l: [['reviewer', 'reviewer: secondo giro sul diff della correzione. Il .doc di testo è letto, un binario vero con NUL resta saltato. Approvato']], on: ['reviewer'], n: 'Nuova review, nuovo verdetto.' },
+          { l: [['command', '/kb-ingest lesson un «pulito» va letto insieme a cosa è stato scansionato'], ['success', 'La lezione entra in wiki']], on: ['kb'], n: 'Per diventare KB stabile dovrà superare l\'esame di promozione.' }
+        ],
+        moral: 'Un risultato pulito vale quanto ciò che è stato letto.'
+      },
+      {
+        tab: 'Segreto nel commit', term: '~/mia-app, sessione simulata',
+        actors: [A('claudemd', 'CLAUDE.md'), A('hook', 'hook pre-commit'), A('human', 'Tu'), A('fast', 'fast-worker', 'Sonnet')],
+        steps: [
+          { l: [['prompt', 'Fai il commit della configurazione delle notifiche']], on: ['claudemd'], n: 'Una richiesta ordinaria.' },
+          { l: [['command', 'git commit -m "config: notifiche"']], on: ['hook'], n: 'Il hook pre-commit parte da solo, prima che il commit esista.' },
+          { l: [['warn', 'config/notifiche.yml:14:GOOGLE_API_KEY'], ['warn', '[pre-commit] commit BLOCCATO: secret rilevati nei file in staging']], on: ['hook'], n: 'Lo scanner dice file, riga e tipo. Il valore non viene mai stampato.' },
+          { l: [['lead', 'Lead: mi fermo. Non stampo il valore, non lo cancello da solo, non aggiro il blocco']], on: ['claudemd'], n: 'Il commit resta fermo finché il segreto c\'è.' },
+          { l: [['lead', 'Lead: la chiave è già finita altrove (log, chat, backup)? Se sì, va ruotata. Decidi tu']], on: ['human'], n: 'Ruotare una chiave dipende da dove è stata vista. La decisione resta all\'umano.' },
+          { l: [['prompt', 'La ruoto io. Nel file lascia il nome di una variabile d\'ambiente']], on: ['human'], n: 'Il valore vero va nell\'ambiente del servizio, non nel repo.' },
+          { l: [['agent', 'Lead → fast-worker: sostituisci il valore con la variabile e ripeti la scansione'], ['agentresp', 'fast-worker: file aggiornato, scanner senza ritrovamenti, commit riuscito']], on: ['fast'], n: 'Un file con un segreto non va a Haiku: il quick-worker non li legge.' }
+        ],
+        moral: 'Lo scanner ferma il commit, l\'umano decide sulla chiave.'
       }
     ],
     en: [
@@ -72,6 +156,34 @@
         moral: 'The second project did not repay what the first one had already paid for.'
       },
       {
+        tab: 'Cloud session', term: '~/my-project, simulated cloud session',
+        actors: [A('claudemd', 'CLAUDE.md'), A('cloud', 'Cloud session'), A('kb', 'KB and wiki, read-only'), A('handoff', 'docs/kb-handoff/'), A('wiki', 'Local wiki')],
+        steps: [
+          { l: [['prompt', 'Fix the rounding in the quote totals']], on: ['claudemd', 'cloud'], n: 'A cloud session starts from a clone of the repo: it sees the project, not your computer.' },
+          { l: [['lead', 'Lead: searching the KB for a pattern on rounded amounts'], ['kb', 'KB: read, no pattern. From here it is read-only']], on: ['kb'], n: 'The KB can be read from the cloud. It cannot be written.' },
+          { l: [['lead', 'Lead: cause found, amounts that were already rounded get added up. I round once, on the total'], ['success', 'quote tests: green']], on: ['cloud'], n: 'The work gets done and proven as it would locally.' },
+          { l: [['lead', 'Lead: the lesson applies to other projects too, but from here I cannot write it to the KB or the wiki']], on: ['kb', 'cloud'], n: 'Better to say so than to lose it.' },
+          { l: [['command', 'writing docs/kb-handoff/rounding.md'], ['success', 'note in the repo: what happened, how it was proven, no secrets']], on: ['handoff'], n: 'The note travels with the repo, in the same commit as the fix.' },
+          { l: [['prompt', '(on your computer) /kb-ingest lesson rounding, from the text of docs/kb-handoff/rounding.md']], on: ['wiki'], n: '/kb-ingest does not read docs/kb-handoff/: you carry the note into the wiki by hand, as the text of the lesson.' },
+          { l: [['success', 'wiki: source saved, project page updated, line added to the log'], ['lead', 'Lead: removing the note from docs/kb-handoff/ and committing']], on: ['wiki', 'handoff'], n: 'The note was a bridge, then it goes: the source stays the wiki.' }
+        ],
+        moral: 'A session that cannot write to the KB leaves a note, not a lost lesson.'
+      },
+      {
+        tab: 'Promotion to KB', term: '~/llm-wiki, simulated session',
+        actors: [A('claudemd', 'CLAUDE.md'), A('wiki', 'Wiki: concepts/'), A('exam', '/kb-promote'), A('kb', 'Stable KB: patterns')],
+        steps: [
+          { l: [['prompt', '/kb-promote webhook-idempotency']], on: ['exam'], n: 'Promotion is an exam, not a copy and paste.' },
+          { l: [['lead', 'Lead: reading wiki/concepts/webhook-idempotency.md'], ['kb', 'wiki: seen in 2 projects, verified in production in both']], on: ['wiki'], n: 'The wiki says what was seen and where.' },
+          { l: [['kb', '[x] used by at least 2 projects'], ['kb', '[x] verified in production'], ['kb', '[x] not already in patterns/patterns.md']], on: ['exam'], n: 'One condition out of three is enough (here, the 2 projects). On top of that: verified in production and not already present.' },
+          { l: [['success', 'promoted: new section in patterns/patterns.md'], ['command', '"Promoted" note on the concept, PROMOTE line in wiki/log.md, one commit per repo']], on: ['kb', 'wiki'], n: 'Wiki and KB change together, and the log records it.' },
+          { l: [['prompt', '/kb-promote export-column-order']], on: ['exam'], n: 'A second concept, same exam.' },
+          { l: [['kb', '[ ] used by at least 2 projects: no, just one'], ['kb', '[ ] a gotcha worth an hour or more: no'], ['kb', '[ ] declared a standard: no']], on: ['exam', 'wiki'], n: 'None of the three conditions holds.' },
+          { l: [['lead', 'Lead: exam not passed, the concept stays in the wiki. If you see it in another project, the exam runs again']], on: ['wiki'], n: 'The KB stays small. The wiki can hold what is still a single observation.' }
+        ],
+        moral: 'A lesson enters the KB when it has held up in more than one place.'
+      },
+      {
         tab: 'Parental signature', term: '~/school-portal, simulated session',
         actors: [A('claudemd', 'CLAUDE.md'), A('kb', 'Stable KB and wiki'), A('specialist', 'backend-dev', 'Sonnet'), A('skill', 'security', 'Opus'), A('reviewer', 'reviewer', 'Opus')],
         steps: [
@@ -88,6 +200,34 @@
         moral: 'The security requirements were already written before the editor opened.'
       },
       {
+        tab: 'Moves up a tier', term: '~/my-app, simulated session',
+        actors: [A('claudemd', 'CLAUDE.md'), A('quick', 'quick-worker', 'Haiku'), A('fast', 'fast-worker', 'Sonnet'), A('deep', 'deep-reasoner', 'Opus'), A('reviewer', 'reviewer', 'Opus')],
+        steps: [
+          { l: [['prompt', 'Move the tests of every module to the new config format']], on: ['claudemd'], n: 'The lead starts from the cheapest tier that is enough.' },
+          { l: [['lead', 'Lead: the how is settled and a command proves it. Starting with quick-worker'], ['agent', 'Lead → quick-worker: convert the tests of module A and run the suite']], on: ['quick'], n: 'A mechanical change, provable: Haiku.' },
+          { l: [['agentresp', 'quick-worker: 12 files converted, 3 tests fail. Cause not found, stopping']], on: ['quick'], n: 'Haiku says where it stopped instead of guessing.' },
+          { l: [['lead', 'Lead: a cause has to be found. Relaunching on fast-worker with Haiku\'s work attached'], ['agent', 'Lead → fast-worker: the 12 files are already converted, find out why 3 tests fail']], on: ['fast'], n: 'One tier up, without redoing the work already done.' },
+          { l: [['agentresp', 'fast-worker: the shared helpers sort data differently in the new format. Two ways: adapter or rewrite']], on: ['fast'], n: 'Sonnet finds the cause and meets a choice that weighs on future modules.' },
+          { l: [['agent', 'Lead → deep-reasoner: adapter or rewrite of the helpers? Answer in 10 lines'], ['agentresp', 'deep-reasoner: rewrite. Adapter only for module B, which depends on an external API']], on: ['deep'], n: 'A design choice goes to Opus.' },
+          { l: [['agentresp', 'fast-worker: helpers rewritten, tests green in every module'], ['reviewer', 'reviewer: ran the whole suite, not just module A. Approved']], on: ['fast', 'reviewer'], n: 'The gate closes: a clean context checks before "done".' }
+        ],
+        moral: 'You move up a tier only for a reason you can state.'
+      },
+      {
+        tab: 'Rename across repos', term: '~/projects, simulated session',
+        actors: [A('claudemd', 'CLAUDE.md'), A('quick', 'quick-worker', 'Haiku'), A('reviewer', 'reviewer', 'Opus'), A('log', 'Review log, in KB')],
+        steps: [
+          { l: [['prompt', 'Rename the project from old-name to new-name: toolkit, slides and documentation']], on: ['claudemd'], n: 'Three repos, one name to change.' },
+          { l: [['lead', 'Lead: plan in three parts. Toolkit, slides, documentation: different files, no dependency between them'], ['lead', 'Lead: they run in parallel, each with a command that proves the work']], on: ['claudemd'], n: 'The lead plans and delegates. Its context stays free.' },
+          { l: [['agent', 'Lead → quick-worker (toolkit): replace the name, then grep must return zero'], ['agent', 'Lead → quick-worker (slides): replace the name in the pages, then grep at zero'], ['agent', 'Lead → quick-worker (documentation): replace name and links, then grep at zero']], on: ['quick'], n: 'Three agents at once, mechanical work with a proof: Haiku.' },
+          { l: [['agentresp', 'toolkit: 41 occurrences, grep at zero'], ['agentresp', 'slides: 18 occurrences, grep at zero'], ['agentresp', 'documentation: 27 occurrences and the internal links, grep at zero']], on: ['quick'], n: 'Each reports the result of its own command.' },
+          { l: [['lead', 'Lead: repo renamed on GitHub. Trying an old link: it opens the new address'], ['success', 'old links are redirected']], on: ['claudemd'], n: 'GitHub redirects the addresses of a renamed repo. Links from outside the repo keep working.' },
+          { l: [['reviewer', 'reviewer: last approved SHA in the review log: a1b2c3d. Reviewing only git diff a1b2c3d..HEAD']], on: ['reviewer', 'log'], n: 'Incremental review log: you look at what changed since the last approved SHA, not the whole project.' },
+          { l: [['reviewer', 'reviewer: no reference to the old name left. Approved'], ['success', 'review log updated: new SHA, outcome, no open findings']], on: ['reviewer', 'log'], n: 'The log entry is the starting point of the next review.' }
+        ],
+        moral: 'The work splits in parallel, the review looks only at the diff.'
+      },
+      {
         tab: 'Unpaid order', term: '~/online-store, simulated session',
         actors: [A('claudemd', 'CLAUDE.md'), A('kb', 'Stable KB and wiki'), A('skill', 'debugging-sistematico'), A('quick', 'quick-worker', 'Haiku'), A('specialist', 'backend-dev', 'Sonnet'), A('reviewer', 'reviewer', 'Opus')],
         steps: [
@@ -102,10 +242,43 @@
           { l: [['command', '/kb-ingest'], ['success', 'The session confirms pattern 16 on another project']], on: ['kb'], n: 'The pattern holds again, somewhere else.' }
         ],
         moral: 'Forcing the order to "paid" by hand would have hidden the bug.'
+      },
+      {
+        tab: 'Reviewer says no', term: '~/toolkit, simulated session',
+        actors: [A('claudemd', 'CLAUDE.md'), A('fast', 'fast-worker', 'Sonnet'), A('reviewer', 'reviewer', 'Opus'), A('kb', 'Stable KB and wiki')],
+        steps: [
+          { l: [['prompt', 'Before the release, run the secret scanner over the whole repo']], on: ['claudemd'], n: 'A routine check.' },
+          { l: [['agent', 'Lead → fast-worker: run the scanner over the whole repo'], ['agentresp', 'fast-worker: exit 0, nothing found']], on: ['fast'], n: 'The result looks clean.' },
+          { l: [['reviewer', 'reviewer: exit 0 is not enough. Which files did the scanner read?'], ['reviewer', 'reviewer: it skips files with a .doc extension, even when they are plain text. A test .doc holds a fake key and it does not see it']], on: ['reviewer'], n: 'The reviewer checks the method, not only the outcome. This was a false clean.' },
+          { l: [['reviewer', 'reviewer: not approved']], on: ['reviewer'], n: 'The gate can say no.' },
+          { l: [['agent', 'Lead → fast-worker: a file with no NUL bytes is always read, whatever its extension. The list only applies to files that contain NUL'], ['agentresp', 'fast-worker: fixed. Test added: a text .doc with a fake key is now reported']], on: ['fast'], n: 'The fix comes with a test that would have failed before.' },
+          { l: [['reviewer', 'reviewer: second pass on the fix diff. The text .doc is read, a real binary with NUL is still skipped. Approved']], on: ['reviewer'], n: 'New review, new verdict.' },
+          { l: [['command', '/kb-ingest lesson a "clean" result has to be read together with what was scanned'], ['success', 'The lesson enters the wiki']], on: ['kb'], n: 'To become stable KB it will have to pass the promotion exam.' }
+        ],
+        moral: 'A clean result is worth what was read.'
+      },
+      {
+        tab: 'Secret in a commit', term: '~/my-app, simulated session',
+        actors: [A('claudemd', 'CLAUDE.md'), A('hook', 'pre-commit hook'), A('human', 'You'), A('fast', 'fast-worker', 'Sonnet')],
+        steps: [
+          { l: [['prompt', 'Commit the notification config']], on: ['claudemd'], n: 'An ordinary request.' },
+          { l: [['command', 'git commit -m "config: notifications"']], on: ['hook'], n: 'The pre-commit hook starts on its own, before the commit exists.' },
+          { l: [['warn', 'config/notifications.yml:14:GOOGLE_API_KEY'], ['warn', '[pre-commit] commit BLOCKED: secrets found in staged files']], on: ['hook'], n: 'The scanner gives file, line and type. The value is never printed.' },
+          { l: [['lead', 'Lead: stopping. I do not print the value, I do not delete it myself, I do not bypass the block']], on: ['claudemd'], n: 'The commit stays put as long as the secret is there.' },
+          { l: [['lead', 'Lead: has the key already ended up elsewhere (logs, chat, backups)? If so, it needs rotating. Your call']], on: ['human'], n: 'Rotating a key depends on where it was seen. The decision stays with the human.' },
+          { l: [['prompt', 'I will rotate it. Leave the name of an environment variable in the file']], on: ['human'], n: 'The real value goes in the service environment, not in the repo.' },
+          { l: [['agent', 'Lead → fast-worker: replace the value with the variable and scan again'], ['agentresp', 'fast-worker: file updated, scanner finds nothing, commit done']], on: ['fast'], n: 'A file with a secret does not go to Haiku: the quick-worker does not read them.' }
+        ],
+        moral: 'The scanner stops the commit, the human decides about the key.'
       }
     ]
   };
   window.KB_SIM_DATA = DATA;
+  var GROUPS = {
+    it: ['Conoscenza', 'Orchestrazione', 'Qualità'],
+    en: ['Knowledge', 'Orchestration', 'Quality']
+  };
+  var PER = 3;
 
   var st = { sc: 0, step: 0 };
   var el = {};
@@ -119,9 +292,19 @@
   function render() {
     var d = cur(), s = d.steps[st.step];
     el.bar.textContent = d.term;
+    var g = Math.floor(st.sc / PER);
+    el.groups.forEach(function (b, i) {
+      b.textContent = '';
+      var r = document.createElement('span'); r.className = 'num'; r.textContent = (i * PER + 1) + '–' + (i * PER + PER);
+      b.appendChild(r); b.appendChild(document.createTextNode(' ' + GROUPS[KB.lang][i]));
+      b.setAttribute('aria-pressed', String(i === g));
+    });
     el.tabs.forEach(function (b, i) {
-      b.textContent = DATA[KB.lang][i].tab;
-      b.setAttribute('aria-pressed', String(i === st.sc));
+      var idx = g * PER + i;
+      b.textContent = '';
+      var r = document.createElement('span'); r.className = 'num'; r.textContent = String(idx + 1);
+      b.appendChild(r); b.appendChild(document.createTextNode(' ' + DATA[KB.lang][idx].tab));
+      b.setAttribute('aria-pressed', String(idx === st.sc));
     });
     el.term.innerHTML = '';
     for (var i = 0; i <= st.step; i++) {
@@ -173,7 +356,9 @@
     el.prev = document.getElementById('sim-prev');
     el.next = document.getElementById('sim-next');
     el.tabs = Array.prototype.slice.call(document.querySelectorAll('.sim-tab'));
-    el.tabs.forEach(function (b, i) { btn(b, function () { pick(i); }); });
+    el.groups = Array.prototype.slice.call(document.querySelectorAll('.sim-grp'));
+    el.tabs.forEach(function (b, i) { btn(b, function () { pick(Math.floor(st.sc / PER) * PER + i); }); });
+    el.groups.forEach(function (b, i) { btn(b, function () { pick(i * PER); }); });
     btn(el.next, next); btn(el.prev, prev); btn(document.getElementById('sim-restart'), restart);
     // toccare il terminale fa avanzare
     document.getElementById('sim-termbox').addEventListener('click', next);
@@ -186,9 +371,9 @@
     bind(13, 'Enter', 'Simulatore: avanti · step', next, function () { if (Reveal.isOverview()) Reveal.toggleOverview(false); });
     bind(40, 'Down', 'Simulatore: avanti · step', next, function () { Reveal.next(); });
     bind(38, 'Up', 'Simulatore: indietro · back', prev, function () { Reveal.prev(); });
-    bind(49, '1', 'Scenario 1', function () { pick(0); });
-    bind(50, '2', 'Scenario 2', function () { pick(1); });
-    bind(51, '3', 'Scenario 3', function () { pick(2); });
+    for (var n = 0; n < 9; n++) (function (n) {
+      bind(49 + n, String(n + 1), 'Scenario ' + (n + 1), function () { pick(n); });
+    })(n);
     bind(82, 'R', 'Simulatore: ricomincia · restart', restart);
     Reveal.on('slidechanged', function () { if (isActive()) render(); });
     Reveal.on('overviewhidden', function () { if (isActive()) render(); });

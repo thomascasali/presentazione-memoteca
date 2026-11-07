@@ -20,7 +20,7 @@ Tre voci raggiungibili dall'indice `index.html`. Lingua italiana di default, `?l
 |------|------|-----------|-------|
 | Presentazione | `presentazione.html` | Il problema, cosa offre già Claude Code, l'idea, i tre livelli e l'esame di promozione, comandi, lead e agenti, gate del reviewer, review log, skill, pattern, fonte unica, ripristino, il quadro completo, limiti, come provarlo | 24 |
 | Sotto il cofano | `sotto-il-cofano.html` | Estratti dai file del toolkit 0.4.1: bootstrap, CLAUDE.md, orchestratore, agente, skill, pagina wiki, KB stabile, il giro completo | 13 |
-| Una sessione vera | `sessione-vera.html` | Simulatore di tre sessioni di lavoro (Invio o freccia giù per avanzare, 1 2 3 per lo scenario) | 3 |
+| Una sessione vera | `sessione-vera.html` | Simulatore di nove sessioni di lavoro in tre parti, conoscenza, orchestrazione e qualità (Invio o freccia giù per avanzare, 1-9 per lo scenario) | 3 |
 
 Codice comune in `shared.css`, `shared.js` e `sim.js`. Solo reveal.js 5.1.0 da cdnjs, nessuna build. Export PDF con `?print-pdf`.
 

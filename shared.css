@@ -449,3 +449,5 @@ html.portrait .sim .actor{font-size:15px;padding:3px 8px}
 .tbl.rep .trow{padding:5px 4px;font-size:21px;line-height:1.22}
 #si-ripete .callout.sm{font-size:var(--fs-xs)}
 #si-ripete .xlinks a{min-height:36px;padding:4px 12px}
+
+.tl.lead{font-size:inherit}

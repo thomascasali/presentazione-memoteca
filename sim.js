@@ -80,15 +80,15 @@
         moral: 'Si sale di livello solo per un motivo che si sa dire.'
       },
       {
-        tab: 'Rinomina su più repo', term: '~/progetti, sessione simulata',
+        tab: 'Rinomina su più repo', term: '~/mio-progetto, sessione simulata',
         actors: [A('claudemd', 'CLAUDE.md'), A('quick', 'quick-worker', 'Haiku'), A('reviewer', 'reviewer', 'Opus'), A('log', 'Review log, in KB')],
         steps: [
-          { l: [['prompt', 'Rinomina il progetto da vecchio-nome a nuovo-nome: toolkit, slide e documentazione']], on: ['claudemd'], n: 'Tre repo, un nome da cambiare.' },
-          { l: [['lead', 'Lead: piano in tre parti. Toolkit, slide, documentazione: file diversi, nessuna dipendenza tra loro'], ['lead', 'Lead: vanno in parallelo, ognuno con un comando che prova il lavoro']], on: ['claudemd'], n: 'Il lead pianifica e delega. Il suo contesto resta libero.' },
-          { l: [['agent', 'Lead → quick-worker (toolkit): sostituisci il nome, poi grep deve dare zero'], ['agent', 'Lead → quick-worker (slide): sostituisci il nome nelle pagine, poi grep a zero'], ['agent', 'Lead → quick-worker (documentazione): sostituisci nome e link, poi grep a zero']], on: ['quick'], n: 'Tre agenti insieme, lavoro meccanico con prova: Haiku.' },
-          { l: [['agentresp', 'toolkit: 41 occorrenze, grep a zero'], ['agentresp', 'slide: 18 occorrenze, grep a zero'], ['agentresp', 'documentazione: 27 occorrenze e i link interni, grep a zero']], on: ['quick'], n: 'Ognuno riporta l\'esito del suo comando.' },
+          { l: [['prompt', 'Rinomina il progetto da vecchio-nome a nuovo-nome: codice, sito e documentazione']], on: ['claudemd'], n: 'Tre repo, un nome da cambiare.' },
+          { l: [['lead', 'Lead: piano in tre parti. Codice, sito, documentazione: file diversi, nessuna dipendenza tra loro'], ['lead', 'Lead: vanno in parallelo, ognuno con un comando che prova il lavoro']], on: ['claudemd'], n: 'Il lead pianifica e delega. Il suo contesto resta libero.' },
+          { l: [['agent', 'Lead → quick-worker (codice): sostituisci il nome, poi grep deve dare zero'], ['agent', 'Lead → quick-worker (sito): sostituisci il nome nelle pagine, poi grep a zero'], ['agent', 'Lead → quick-worker (documentazione): sostituisci nome e link, poi grep a zero']], on: ['quick'], n: 'Tre agenti insieme, lavoro meccanico con prova: Haiku.' },
+          { l: [['agentresp', 'codice: 41 occorrenze, grep a zero'], ['agentresp', 'sito: 18 occorrenze, grep a zero'], ['agentresp', 'documentazione: 27 occorrenze e i link interni, grep a zero']], on: ['quick'], n: 'Ognuno riporta l\'esito del suo comando.' },
           { l: [['lead', 'Lead: repo rinominato su GitHub. Provo un vecchio link: apre il nuovo indirizzo'], ['success', 'i vecchi link vengono reindirizzati']], on: ['claudemd'], n: 'GitHub reindirizza gli indirizzi del repo rinominato. I link fuori dal repo continuano a funzionare.' },
-          { l: [['reviewer', 'reviewer: ultimo SHA approvato nel review log: a1b2c3d. Rivedo solo git diff a1b2c3d..HEAD']], on: ['reviewer', 'log'], n: 'Review log incrementale: si guarda ciò che è cambiato dall\'ultimo SHA approvato, non l\'intero progetto.' },
+          { l: [['reviewer', 'reviewer: ultimo SHA registrato nel review log: a1b2c3d. Rivedo solo git diff a1b2c3d..HEAD']], on: ['reviewer', 'log'], n: 'Review log incrementale: si guarda ciò che è cambiato dall\'ultimo SHA registrato, non l\'intero progetto.' },
           { l: [['reviewer', 'reviewer: nessun riferimento rimasto al vecchio nome. Approvato'], ['success', 'review log aggiornato: nuovo SHA, esito, nessun finding aperto']], on: ['reviewer', 'log'], n: 'La voce nel log è il punto di partenza della prossima review.' }
         ],
         moral: 'Il lavoro si divide in parallelo, la review guarda solo il diff.'
@@ -110,10 +110,10 @@
         moral: 'Forzare l\'ordine a "pagato" a mano avrebbe nascosto il bug.'
       },
       {
-        tab: 'Il reviewer dice no', term: '~/toolkit, sessione simulata',
+        tab: 'Il reviewer dice no', term: '~/mio-progetto, sessione simulata',
         actors: [A('claudemd', 'CLAUDE.md'), A('fast', 'fast-worker', 'Sonnet'), A('reviewer', 'reviewer', 'Opus'), A('kb', 'KB stabile e wiki')],
         steps: [
-          { l: [['prompt', 'Prima del rilascio, passa lo scanner anti-segreti su tutto il repo']], on: ['claudemd'], n: 'Un controllo di routine.' },
+          { l: [['prompt', 'Prima del rilascio, passa lo scanner anti-segreti del progetto su tutto il repo']], on: ['claudemd'], n: 'Un controllo di routine.' },
           { l: [['agent', 'Lead → fast-worker: esegui lo scanner su tutto il repo'], ['agentresp', 'fast-worker: exit 0, nessun ritrovamento']], on: ['fast'], n: 'Il risultato sembra pulito.' },
           { l: [['reviewer', 'reviewer: exit 0 non basta. Quali file ha letto lo scanner?'], ['reviewer', 'reviewer: salta i file con estensione .doc, anche quando sono testo. In un .doc di prova c\'è una chiave finta e non la vede']], on: ['reviewer'], n: 'Il reviewer controlla il metodo, non solo l\'esito. Questo era un falso pulito.' },
           { l: [['reviewer', 'reviewer: non approvato']], on: ['reviewer'], n: 'Il gate può dire di no.' },
@@ -214,15 +214,15 @@
         moral: 'You move up a tier only for a reason you can state.'
       },
       {
-        tab: 'Rename across repos', term: '~/projects, simulated session',
+        tab: 'Rename across repos', term: '~/my-project, simulated session',
         actors: [A('claudemd', 'CLAUDE.md'), A('quick', 'quick-worker', 'Haiku'), A('reviewer', 'reviewer', 'Opus'), A('log', 'Review log, in KB')],
         steps: [
-          { l: [['prompt', 'Rename the project from old-name to new-name: toolkit, slides and documentation']], on: ['claudemd'], n: 'Three repos, one name to change.' },
-          { l: [['lead', 'Lead: plan in three parts. Toolkit, slides, documentation: different files, no dependency between them'], ['lead', 'Lead: they run in parallel, each with a command that proves the work']], on: ['claudemd'], n: 'The lead plans and delegates. Its context stays free.' },
-          { l: [['agent', 'Lead → quick-worker (toolkit): replace the name, then grep must return zero'], ['agent', 'Lead → quick-worker (slides): replace the name in the pages, then grep at zero'], ['agent', 'Lead → quick-worker (documentation): replace name and links, then grep at zero']], on: ['quick'], n: 'Three agents at once, mechanical work with a proof: Haiku.' },
-          { l: [['agentresp', 'toolkit: 41 occurrences, grep at zero'], ['agentresp', 'slides: 18 occurrences, grep at zero'], ['agentresp', 'documentation: 27 occurrences and the internal links, grep at zero']], on: ['quick'], n: 'Each reports the result of its own command.' },
+          { l: [['prompt', 'Rename the project from old-name to new-name: code, site and documentation']], on: ['claudemd'], n: 'Three repos, one name to change.' },
+          { l: [['lead', 'Lead: plan in three parts. Code, site, documentation: different files, no dependency between them'], ['lead', 'Lead: they run in parallel, each with a command that proves the work']], on: ['claudemd'], n: 'The lead plans and delegates. Its context stays free.' },
+          { l: [['agent', 'Lead → quick-worker (code): replace the name, then grep must return zero'], ['agent', 'Lead → quick-worker (site): replace the name in the pages, then grep at zero'], ['agent', 'Lead → quick-worker (documentation): replace name and links, then grep at zero']], on: ['quick'], n: 'Three agents at once, mechanical work with a proof: Haiku.' },
+          { l: [['agentresp', 'code: 41 occurrences, grep at zero'], ['agentresp', 'site: 18 occurrences, grep at zero'], ['agentresp', 'documentation: 27 occurrences and the internal links, grep at zero']], on: ['quick'], n: 'Each reports the result of its own command.' },
           { l: [['lead', 'Lead: repo renamed on GitHub. Trying an old link: it opens the new address'], ['success', 'old links are redirected']], on: ['claudemd'], n: 'GitHub redirects the addresses of a renamed repo. Links from outside the repo keep working.' },
-          { l: [['reviewer', 'reviewer: last approved SHA in the review log: a1b2c3d. Reviewing only git diff a1b2c3d..HEAD']], on: ['reviewer', 'log'], n: 'Incremental review log: you look at what changed since the last approved SHA, not the whole project.' },
+          { l: [['reviewer', 'reviewer: last SHA recorded in the review log: a1b2c3d. Reviewing only git diff a1b2c3d..HEAD']], on: ['reviewer', 'log'], n: 'Incremental review log: you look at what changed since the last recorded SHA, not the whole project.' },
           { l: [['reviewer', 'reviewer: no reference to the old name left. Approved'], ['success', 'review log updated: new SHA, outcome, no open findings']], on: ['reviewer', 'log'], n: 'The log entry is the starting point of the next review.' }
         ],
         moral: 'The work splits in parallel, the review looks only at the diff.'
@@ -244,10 +244,10 @@
         moral: 'Forcing the order to "paid" by hand would have hidden the bug.'
       },
       {
-        tab: 'Reviewer says no', term: '~/toolkit, simulated session',
+        tab: 'Reviewer says no', term: '~/my-project, simulated session',
         actors: [A('claudemd', 'CLAUDE.md'), A('fast', 'fast-worker', 'Sonnet'), A('reviewer', 'reviewer', 'Opus'), A('kb', 'Stable KB and wiki')],
         steps: [
-          { l: [['prompt', 'Before the release, run the secret scanner over the whole repo']], on: ['claudemd'], n: 'A routine check.' },
+          { l: [['prompt', 'Before the release, run the project\'s secret scanner over the whole repo']], on: ['claudemd'], n: 'A routine check.' },
           { l: [['agent', 'Lead → fast-worker: run the scanner over the whole repo'], ['agentresp', 'fast-worker: exit 0, nothing found']], on: ['fast'], n: 'The result looks clean.' },
           { l: [['reviewer', 'reviewer: exit 0 is not enough. Which files did the scanner read?'], ['reviewer', 'reviewer: it skips files with a .doc extension, even when they are plain text. A test .doc holds a fake key and it does not see it']], on: ['reviewer'], n: 'The reviewer checks the method, not only the outcome. This was a false clean.' },
           { l: [['reviewer', 'reviewer: not approved']], on: ['reviewer'], n: 'The gate can say no.' },

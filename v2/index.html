@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Conoscenza che attraversa i progetti</title>
 <meta name="description" content="Come funziona claude-kb-workflow: dalle sessioni di Claude Code a una wiki, poi a una KB stabile. Italiano e inglese.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,7 +52,13 @@ html,body,.reveal-viewport{background:var(--bg)!important;margin:0;height:100%;o
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
 .callout{border-left:5px solid var(--acc);padding:6px 0 6px 22px;margin:0;font-size:var(--fs-body);color:var(--text)}
 .callout.sm{font-size:var(--fs-sm)}
-.tbl .trow{padding:5px 4px}
+.tbl .trow{padding:3px 4px;font-size:calc(var(--fs-sm) - 5px)}
+.tbl+.callout.sm{font-size:var(--fs-xs)}
+#claude-da-solo .body{gap:12px}
+#claude-da-solo h2{margin-bottom:12px}
+#specialisti .body{gap:12px}
+#specialisti .dim{font-size:var(--fs-xs);margin:0}
+.excerpt pre code{padding:10px 18px!important}
 .chain{font-size:var(--fs-body);color:var(--acc);margin:0}
 .gate{font-size:var(--fs-body);color:var(--text);background:var(--light);border-radius:8px;padding:14px 22px;margin:0}
 .tag{display:inline-block;padding:3px 12px;border-radius:99px;font-size:var(--fs-xs);font-weight:600}
@@ -108,7 +114,7 @@ dd{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text);line-height:1.3}
 
 /* specialisti */
 .spgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 28px}
-.sp{display:flex;flex-direction:column;gap:0;padding:7px 0;border-bottom:1px solid var(--border)}
+.sp{display:flex;flex-direction:column;gap:0;padding:4px 0;border-bottom:1px solid var(--border)}
 .sp code{font-size:var(--fs-xs);color:var(--blue)}
 .sp.o code{color:var(--purple)}
 .sp span{font-size:var(--fs-xs);color:var(--dim);line-height:1.25}
@@ -137,7 +143,7 @@ dd{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text);line-height:1.3}
 .hljs-ln-code{padding-left:0!important}
 .reveal pre code.has-highlights tr:not(.highlight-line){opacity:.85}
 .reveal pre code .highlight-line{background:rgba(240,193,105,.12)}
-.excerpt pre{font-size:calc(var(--fs-code) - 2px)}
+.excerpt pre{font-size:calc(var(--fs-code) - 3px)}
 .excerpt .src{color:var(--muted);margin:0 0 8px}
 
 /* fonte unica */
@@ -187,9 +193,9 @@ html.portrait .body{gap:14px}
 html.portrait .cols2,html.portrait .cols3,html.portrait .tiers,html.portrait .repos{grid-template-columns:1fr;gap:12px}
 html.portrait .repos{grid-template-columns:repeat(3,1fr);gap:8px}
 html.portrait .repo{min-height:0;padding:10px;gap:8px}
-html.portrait .repo .small{font-size:15px}
-html.portrait .repo .tag{font-size:14px;padding:2px 8px}
-html.portrait .repo .mem{font-size:13px;padding:2px 6px}
+html.portrait .repo .small{font-size:16px}
+html.portrait .repo .tag{font-size:16px;padding:2px 8px}
+html.portrait .repo .mem{font-size:16px;padding:2px 6px}
 html.portrait .card{padding:12px 16px}
 html.portrait .flow{flex-direction:column;gap:20px}
 html.portrait .flow.five{gap:14px}
@@ -215,6 +221,10 @@ html.portrait .reveal pre code{padding:10px 12px}
 html.portrait .ideas .card{gap:12px}
 html.portrait .gate{padding:10px 14px}
 html.portrait .callout{font-size:var(--fs-sm)}
+html.portrait .card{padding:9px 14px}
+html.portrait .cols3,html.portrait .tiers{gap:9px}
+html.portrait .tier p,html.portrait .lvl dd{font-size:20px}
+html.portrait .card h3{margin-bottom:4px}
 html.portrait .tier .small{margin-bottom:2px}
 html.portrait .tier h3{margin-bottom:2px}
 html.print-pdf .reveal .slides section,html.reveal-print .reveal .slides section{padding:52px 72px!important;box-sizing:border-box}
@@ -257,14 +267,14 @@ noscript{position:fixed;inset:0;display:flex;align-items:center;justify-content:
 <aside class="notes"><div lang="it"><p>L'auto-memory funziona bene. Il limite è lo scopo: ogni repo accumula i propri appunti, e quello che impari sul progetto A non arriva ai progetti da B a T.</p><p>Il README lo dice così: si ripetono gli stessi errori tra progetti, perché ognuno impara da solo.</p><p>Esempio: un bind mount di Docker che sovrascrive i permessi del container (pattern 7 del toolkit). Può costare un'ora o più, ogni volta che qualcuno lo reincontra senza averlo scritto da nessuna parte.</p></div><div lang="en"><p>Auto-memory works well. The limit is its scope: each repo collects its own notes, and what you learn on project A never reaches projects B to T.</p><p>The README puts it this way: you repeat the same mistakes across projects because each one learns alone.</p><p>Example: a Docker bind mount that overwrites container permissions (pattern 7 in the toolkit). It can cost an hour or more every time someone meets it again with nothing written down.</p></div></aside>
 </section>
 <section id="claude-da-solo" class="g-problem">
-<p class="eyebrow mono"><span class="no">02</span> · <span lang="it">E Claude Code da solo?</span><span lang="en">What about Claude Code alone?</span></p>
+<p class="eyebrow mono"><span class="no">02</span> · <span lang="it">Cosa c'è già</span><span lang="en">What already exists</span></p>
 <h2><span lang="it">E Claude Code da solo?</span><span lang="en">And Claude Code on its own?</span></h2>
 <div class="body">
   <div class="tbl">
     <div class="trow thead mono"><div><span lang="it">Funzione</span><span lang="en">Feature</span></div><div><span lang="it">Cosa fa</span><span lang="en">What it does</span></div><div><span lang="it">Limite</span><span lang="en">Limit</span></div></div>
-    <div class="trow"><div class="tname"><span lang="it">Auto memory</span><span lang="en">Auto memory</span></div><div class="tdo"><span lang="it">Appunti che Claude scrive da solo</span><span lang="en">Notes Claude writes on its own</span></div><div class="tlim"><span lang="it">Un progetto, una macchina, nessun controllo prima di salvare</span><span lang="en">One project, one machine, and nothing checks them before saving</span></div></div><div class="trow"><div class="tname"><span lang="it">Messaggi tra sessioni</span><span lang="en">Messages between sessions</span></div><div class="tdo"><span lang="it">Coordinano le sessioni in tempo reale</span><span lang="en">Coordinate sessions in real time</span></div><div class="tlim"><span lang="it">Non diventano conoscenza salvata, e una sessione cloud non può rispondere</span><span lang="en">Never become saved knowledge, and a cloud session cannot reply</span></div></div><div class="trow"><div class="tname"><span lang="it">Agent teams</span><span lang="en">Agent teams</span></div><div class="tdo"><span lang="it">Un lead, dei teammate, una task list condivisa</span><span lang="en">A lead, teammates, a shared task list</span></div><div class="tlim"><span lang="it">Sperimentali, si attivano con un flag</span><span lang="en">Experimental, enabled with a flag</span></div></div><div class="trow"><div class="tname"><span lang="it">Workflow dinamici</span><span lang="en">Dynamic workflows</span></div><div class="tdo"><span lang="it">Uno script orchestra molti agenti, salvabile nel repo</span><span lang="en">A script runs many agents, can be saved in the repo</span></div><div class="tlim"><span lang="it">Non ha memoria</span><span lang="en">No memory</span></div></div><div class="trow"><div class="tname"><span lang="it">Plugin di organizzazione</span><span lang="en">Organization plugins</span></div><div class="tdo"><span lang="it">Distribuiscono skill e agenti</span><span lang="en">Distribute skills and agents</span></div><div class="tlim"><span lang="it">Non distribuiscono i fatti</span><span lang="en">They don't distribute facts</span></div></div>
+    <div class="trow"><div class="tname"><span lang="it">Auto memory</span><span lang="en">Auto memory</span></div><div class="tdo"><span lang="it">Appunti che Claude scrive da solo</span><span lang="en">Notes Claude writes on its own</span></div><div class="tlim"><span lang="it">Un progetto, una macchina, nessun controllo prima di salvare</span><span lang="en">One project, one machine, and nothing checks them before saving</span></div></div><div class="trow"><div class="tname"><span lang="it">Messaggi tra sessioni</span><span lang="en">Messages between sessions</span></div><div class="tdo"><span lang="it">Coordinano le sessioni in tempo reale</span><span lang="en">Coordinate sessions in real time</span></div><div class="tlim"><span lang="it">Non diventano conoscenza salvata, e una sessione cloud non può rispondere</span><span lang="en">Never become saved knowledge, and a cloud session cannot reply</span></div></div><div class="trow"><div class="tname"><span lang="it">Agent teams</span><span lang="en">Agent teams</span></div><div class="tdo"><span lang="it">Un lead, dei teammate, una task list condivisa</span><span lang="en">A lead, teammates, a shared task list</span></div><div class="tlim"><span lang="it">Sperimentali, si attivano con un flag</span><span lang="en">Experimental, enabled with a flag</span></div></div><div class="trow"><div class="tname"><span lang="it">Workflow dinamici</span><span lang="en">Dynamic workflows</span></div><div class="tdo"><span lang="it">Uno script orchestra molti agenti, salvabile nel repo</span><span lang="en">A script runs many agents, can be saved in the repo</span></div><div class="tlim"><span lang="it">Non hanno memoria</span><span lang="en">They have no memory</span></div></div><div class="trow"><div class="tname"><span lang="it">Plugin di organizzazione</span><span lang="en">Organization plugins</span></div><div class="tdo"><span lang="it">Distribuiscono skill e agenti</span><span lang="en">Distribute skills and agents</span></div><div class="tlim"><span lang="it">Non distribuiscono i fatti</span><span lang="en">They don't distribute facts</span></div></div>
   </div>
-  <p class="callout sm"><span lang="it">Nessuna porta quello che si impara in un progetto agli altri. Il repo resta l'unico canale condiviso, e il workflow si appoggia sopra queste funzioni.</span><span lang="en">None of them carries what you learn in one project to the others. The repo stays the only shared channel, and the workflow builds on top of these features.</span></p>
+  <p class="callout sm"><span lang="it">Nessuna porta quello che si impara in un progetto agli altri. Nel mio uso, il repo resta il canale che porta i fatti da un progetto all'altro, e il workflow si appoggia sopra queste funzioni.</span><span lang="en">None of them carries what you learn in one project to the others. In my use, the repo stays the channel that carries facts from one project to another, and the workflow builds on top of these features.</span></p>
 </div>
 <aside class="notes"><div lang="it"><p>Verificato sulla documentazione ufficiale il 7 novembre 2026.</p><ul><li>Auto memory: appunti in ~/.claude/projects/&lt;repo&gt;/memory/ (code.claude.com/docs/en/memory).</li><li>Messaggi tra sessioni: SendMessage e ListAgents, dalla versione 2.1.224 (7 agosto 2026).</li><li>Agent teams: sperimentali, attivi con un flag. Sono l'alternativa ufficiale all'orchestrazione descritta più avanti.</li><li>Workflow dinamici: dalla 2.1.154 (28 maggio 2026).</li><li>Plugin di organizzazione: portano skill e agenti, non i fatti imparati.</li></ul></div><div lang="en"><p>Checked against the official documentation on 7 November 2026.</p><ul><li>Auto memory: notes in ~/.claude/projects/&lt;repo&gt;/memory/ (code.claude.com/docs/en/memory).</li><li>Messages between sessions: SendMessage and ListAgents, since version 2.1.224 (7 August 2026).</li><li>Agent teams: experimental, enabled with a flag. They are the official alternative to the orchestration described later.</li><li>Dynamic workflows: since 2.1.154 (28 May 2026).</li><li>Organization plugins: they ship skills and agents, not the facts you learned.</li></ul></div></aside>
 </section>
@@ -353,7 +363,7 @@ noscript{position:fixed;inset:0;display:flex;align-items:center;justify-content:
   </div>
   <p class="dim"><span lang="it">Il contesto del lead resta pulito. Per i lavori banali si fa direttamente, senza cerimonia.</span><span lang="en">The lead's context stays clean. Trivial jobs are done directly, no ceremony.</span></p>
 </div>
-<aside class="notes"><div lang="it"><p>Il vantaggio non è solo il parallelismo: i dettagli (file letti, tentativi, output dei test) restano nei contesti usa e getta dei subagent.</p><p>Esempio: per mesi ho creduto di avere dieci specialisti attivi. Il frontmatter dei file era rovinato da un editor (\--- al posto di ---) e nessuno veniva caricato; il lead improvvisava. Nelle versioni precedenti di queste slide lo chiamavo "l'errore di 4 caratteri". Controllo in 30 secondi: chiedere al lead quali subagent ha a disposizione.</p></div><div lang="en"><p>The benefit is not only parallelism: the details (files read, attempts, test output) stay in the subagents' throwaway contexts.</p><p>Example: for months I believed ten specialists were active. An editor had corrupted the files' frontmatter (\--- instead of ---), none loaded, and the lead was improvising. Earlier versions of these slides called it "the 4-character mistake". Check in 30 seconds: ask the lead which subagents it has.</p></div></aside>
+<aside class="notes"><div lang="it"><p>Il vantaggio non è solo il parallelismo: i dettagli (file letti, tentativi, output dei test) restano nei contesti usa e getta dei subagent.</p><p>Esempio: il sistema è rimasto inattivo per mesi senza che me ne accorgessi. Il frontmatter dei due agenti principali era rovinato da un editor (\--- al posto di ---, &amp;#x20; al posto degli spazi) e gli specialisti non ce l'avevano. Tutto sembrava funzionare: il lead improvvisava. Controllo in 30 secondi: chiedere al lead quali subagent ha a disposizione.</p></div><div lang="en"><p>The benefit is not only parallelism: the details (files read, attempts, test output) stay in the subagents' throwaway contexts.</p><p>Example: the system stayed dormant for months without my noticing. An editor had corrupted the frontmatter of the two main agents (\--- instead of ---, &amp;#x20; instead of spaces) and the specialists had none. Everything looked like it worked: the lead was improvising. Check in 30 seconds: ask the lead which subagents it has.</p></div></aside>
 </section>
 <section id="modelli" class="g-agents">
 <p class="eyebrow mono"><span class="no">10</span> · <span lang="it">Tre livelli di modello</span><span lang="en">Three model tiers</span></p>
@@ -386,14 +396,9 @@ noscript{position:fixed;inset:0;display:flex;align-items:center;justify-content:
     <div class="step"><span class="num mono">2</span><h3><span lang="it">Reviewer</span><span lang="en">Reviewer</span></h3><p><span lang="it">Rilegge con un contesto pulito.</span><span lang="en">Rereads with a clean context.</span></p></div>
     <div class="step"><span class="num mono">3</span><h3><span lang="it">Fatto</span><span lang="en">Done</span></h3><p><span lang="it">Solo dopo il suo esito.</span><span lang="en">Only after its verdict.</span></p></div>
   </div>
-  <div class="stats">
-    <div class="stat"><span class="n">26</span><span class="small"><span lang="it">errori trovati</span><span lang="en">errors found</span></span></div>
-    <div class="stat"><span class="n">4</span><span class="small"><span lang="it">bloccanti</span><span lang="en">blocking</span></span></div>
-    <div class="stat"><span class="n">1</span><span class="small"><span lang="it">scritto dal lead</span><span lang="en">written by the lead</span></span></div>
-  </div>
-  <p class="dim"><span lang="it">Il collaudo della v0.2. L'errore del lead, un limite tecnico che non esisteva, l'ha smentito il reviewer.</span><span lang="en">The v0.2 review. The lead's error, a technical limit that did not exist, was disproved by the reviewer.</span></p>
+  <p class="callout sm"><span lang="it">Il reviewer rilegge con un contesto pulito e può contraddire il lead.</span><span lang="en">The reviewer rereads with a clean context and can contradict the lead.</span></p>
 </div>
-<aside class="notes"><div lang="it"><p>Il gate obbligatorio è, secondo il documento di orchestrazione, la singola modifica che rende di più: costringe a una seconda lettura con contesto pulito.</p><p>Il caso: il lead aveva scritto che un subagent non può delegare ad altri subagent, presentandolo come limite tecnico. Il reviewer, che è un subagent, ha fatto notare di avere lo strumento di delega tra i propri. La regola è stata riscritta come scelta di progetto (delega piatta) e corretta ovunque comparisse.</p></div><div lang="en"><p>According to the orchestration doc, the mandatory gate is the single change that pays off most: it forces a second read with a clean context.</p><p>The case: the lead had written that a subagent cannot delegate to other subagents, presented as a technical limit. The reviewer, which is a subagent, pointed out it had the delegation tool among its own. The rule was rewritten as a design choice (flat delegation) and fixed everywhere it appeared.</p></div></aside>
+<aside class="notes"><div lang="it"><p>Il gate obbligatorio è, secondo il documento di orchestrazione, la singola modifica che rende di più: costringe a una seconda lettura con contesto pulito.</p><p>In un controllo del toolkit il reviewer ha trovato anche un errore scritto dal lead.</p></div><div lang="en"><p>According to the orchestration doc, the mandatory gate is the single change that pays off most: it forces a second read with a clean context.</p><p>In one review of the toolkit the reviewer also found an error written by the lead.</p></div></aside>
 </section>
 <section id="review-log" class="g-quality">
 <p class="eyebrow mono"><span class="no">13</span> · <span lang="it">Review log</span><span lang="en">Review log</span></p>
@@ -405,7 +410,7 @@ noscript{position:fixed;inset:0;display:flex;align-items:center;justify-content:
     <div class="step fragment"><span class="num mono">3</span><h3><span lang="it">Aggiungi</span><span lang="en">Append</span></h3><p><span lang="it">Una voce con il nuovo SHA.</span><span lang="en">An entry with the new SHA.</span></p></div>
   </div>
   <pre class="plain"><code>git diff &lt;ultimo-sha&gt;..HEAD</code></pre>
-  <p class="dim"><span lang="it">Il log sta in project-memories/<progetto>.md, mai nel docs/ del repo. Senza log, prima review completa.</span><span lang="en">The log lives in project-memories/&lt;project&gt;.md, never in the repo's docs/. With no log, the first review is a full one.</span></p>
+  <p class="dim"><span lang="it">Il log sta in project-memories/&lt;progetto&gt;.md, mai nel docs/ del repo. Senza log, prima review completa.</span><span lang="en">The log lives in project-memories/&lt;project&gt;.md, never in the repo's docs/. With no log, the first review is a full one.</span></p>
 </div>
 <aside class="notes"><div lang="it"><p>Ogni voce ha data, SHA rivisto, esito e finding ancora aperti. I finding aperti si riportano nella voce successiva finché qualcuno li chiude. Si registra lo SHA rivisto, non uno più recente. Se la storia è stata riscritta e lo SHA non esiste più, si tratta come log mancante. Esempio dal documento: 2026-09-20, e4f5a6b, diff a1b2c3d..e4f5a6b, approvato, "rate limit su /export da decidere".</p></div><div lang="en"><p>Each entry has a date, the reviewed SHA, the outcome and the findings still open. Open findings carry into the next entry until someone closes them. Log the SHA that was reviewed, not a later one. If history was rewritten and the SHA no longer exists, treat it as a missing log. Example from the doc: 2026-09-20, e4f5a6b, diff a1b2c3d..e4f5a6b, approved, "rate limit on /export not yet decided".</p></div></aside>
 </section>
@@ -456,9 +461,9 @@ router.get('/:id', getById);
     <div class="card"><h3><span lang="it">Scanner anti-segreti</span><span lang="en">Secret scanner</span></h3><p><span lang="it">Gira come hook pre-commit sui file in staging.</span><span lang="en">Runs as a pre-commit hook on staged files.</span></p></div>
     <div class="card"><h3><span lang="it">Test di ripristino</span><span lang="en">Restore test</span></h3><p><span lang="it">Su una HOME temporanea vuota. Il primo test è fallito e ha mostrato quattro difetti.</span><span lang="en">On an empty temporary HOME. The first run failed and exposed four defects.</span></p></div>
   </div>
-  <p class="dim"><span lang="it">Anche senza ingest regolari, i transcript locali si leggono con agenti in parallelo e ricostruiscono mesi di lavoro in circa un'ora.</span><span lang="en">Even without regular ingests, local transcripts can be read by parallel agents and rebuild months of work in about an hour.</span></p>
+  <p class="dim"><span lang="it">Anche senza ingest regolari, i transcript locali si leggono con un agente per progetto, in parallelo: decine di sessioni ricostruite in circa un'ora.</span><span lang="en">Even without regular ingests, local transcripts can be read by one agent per project, in parallel: dozens of sessions reconstructed in about an hour.</span></p>
 </div>
-<aside class="notes"><div lang="it"><p>Segreti solo nel password manager o nel .env dei server. Conoscenza e codice stanno in repo Git privati; transcript e cache sono usa e getta.</p><p>I quattro difetti del primo dry-run: lo script moriva a metà senza errori visibili; copie superficiali (le skill senza data/ e scripts/); sovrascritture di file di altri sistemi; un file promesso nel README mai versionato.</p><p>Esempio personale: tre mesi di lavoro su quindici progetti senza traccia centrale, ricostruiti in circa un'ora con dieci agenti in lettura, uno per gruppo di transcript.</p><p>Limite noto dello scanner: un file con byte NUL, senza BOM e con estensione binaria viene saltato senza avviso.</p></div><div lang="en"><p>Secrets only in the password manager or on servers' .env. Knowledge and code sit in private Git repos; transcripts and cache are disposable.</p><p>The four defects of the first dry run: the script died halfway with no visible error; shallow copies (skills without data/ and scripts/); overwrites of other systems' files; a file promised in the README that was never versioned.</p><p>Personal example: three months of work across fifteen projects with no central record, rebuilt in about an hour with ten reading agents, each on a group of transcripts.</p><p>Known scanner limit: a file with NUL bytes, no BOM and a binary extension is skipped without a warning.</p></div></aside>
+<aside class="notes"><div lang="it"><p>Segreti solo nel password manager o nel .env dei server. Conoscenza e codice stanno in repo Git privati; transcript e cache sono usa e getta.</p><p>I quattro difetti del primo dry-run: lo script moriva a metà senza errori visibili; copie superficiali (le skill senza data/ e scripts/); sovrascritture di file di altri sistemi; un file promesso nel README mai versionato.</p><p>Se non hai mai fatto ingest, i transcript locali (~/.claude/projects/&lt;progetto&gt;/*.jsonl) si leggono con agenti in parallelo, uno per progetto: un censimento retroattivo ricostruisce lo stato di decine di sessioni in circa un'ora, poi si compila la wiki.</p><p>Limite noto dello scanner: un file con byte NUL, senza BOM e con estensione binaria viene saltato senza avviso.</p></div><div lang="en"><p>Secrets only in the password manager or on servers' .env. Knowledge and code sit in private Git repos; transcripts and cache are disposable.</p><p>The four defects of the first dry run: the script died halfway with no visible error; shallow copies (skills without data/ and scripts/); overwrites of other systems' files; a file promised in the README that was never versioned.</p><p>If you never ran an ingest, the local transcripts (~/.claude/projects/&lt;project&gt;/*.jsonl) can be read by parallel agents, one per project: a retroactive census rebuilds the state of dozens of sessions in about an hour, then you compile the wiki.</p><p>Known scanner limit: a file with NUL bytes, no BOM and a binary extension is skipped without a warning.</p></div></aside>
 </section>
 <section id="sessione" class="g-agents">
 <p class="eyebrow mono"><span class="no">18</span> · <span lang="it">Una sessione</span><span lang="en">One session</span></p>
@@ -565,7 +570,7 @@ model: haiku
 - If you cannot finish or the check fails, say so plainly,
   with what you did and where you stopped.</code></pre>
 </div></div>
-<aside class="notes"><div lang="it"><p>L'intero file dell'agente di livello Haiku. Il frontmatter (name, description, model) è ciò che il lead vede: la description è l'unico criterio di selezione. Se il frontmatter non si legge, l'agente non esiste.</p></div><div lang="en"><p>The whole file of the Haiku-tier agent. The frontmatter (name, description, model) is what the lead sees: the description is the only selection criterion. If the frontmatter does not parse, the agent does not exist.</p></div></aside>
+<aside class="notes"><div lang="it"><p>Un estratto dell'agente di livello Haiku: il frontmatter, un salto e l'ultimo limite. Il frontmatter (name, description, model) è ciò che il lead vede: la description è l'unico criterio di selezione. Se il frontmatter non si legge, l'agente non esiste.</p></div><div lang="en"><p>An excerpt of the Haiku-tier agent: the frontmatter, a gap and the last limit. The frontmatter (name, description, model) is what the lead sees: the description is the only selection criterion. If the frontmatter does not parse, the agent does not exist.</p></div></aside>
 </section>
 <section id="a-wiki" class="g-app">
 <p class="eyebrow mono"><span class="no">25</span> · <span lang="it">Appendice · pagina wiki</span><span lang="en">Appendix · wiki page</span></p>
@@ -656,7 +661,10 @@ model: haiku
   applyLang(lang, false);
   document.querySelectorAll('.lang button').forEach(function (b) {
     b.addEventListener('click', function () { applyLang(b.getAttribute('data-set-lang'), true); });
-    b.addEventListener('keydown', function (e) { e.stopPropagation(); });
+    b.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
+    });
+    b.addEventListener('click', function () { b.blur(); });
   });
 
   function size() {

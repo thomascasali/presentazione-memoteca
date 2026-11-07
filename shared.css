@@ -130,7 +130,8 @@ dd{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text);line-height:1.3}
 .hljs-meta,.hljs-built_in,.hljs-literal,.hljs-number{color:var(--blue)}
 .hljs-emphasis,.hljs-strong{color:var(--terra)}
 .hljs-ln-numbers,.hljs-ln-n{display:none!important}
-.hljs-ln-code{padding-left:0!important}
+.hljs-ln-code{padding-left:18px!important;padding-right:18px!important}
+.reveal pre code table{width:100%;border-collapse:collapse}
 .reveal pre code.has-highlights tr:not(.highlight-line){opacity:.85}
 .reveal pre code .highlight-line{background:rgba(240,193,105,.12)}
 .excerpt pre{font-size:calc(var(--fs-code) - 3px)}
@@ -407,3 +408,4 @@ html.portrait .eyebrow .mt-end .mt-logo{height:20px}
 .reveal .slides>section>section{height:100%;box-sizing:border-box;padding:var(--pad);flex-direction:column;justify-content:flex-start;text-align:left}
 .reveal .slides>section>section.present{display:flex!important}
 .reveal kbd,.keys-row kbd{font:inherit}
+html.portrait .hljs-ln-code{padding-left:10px!important;padding-right:10px!important}
